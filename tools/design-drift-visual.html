@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design Drift</title>
+<style>
+  @font-face {
+    font-family: 'Cal Sans';
+    src: url('../../assets/fonts/CalSans-SemiBold.woff2') format('woff2'),
+         url('../../assets/fonts/CalSans-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Inter';
+    src: url('../../assets/fonts/Inter-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'Inter';
+    src: url('../../assets/fonts/Inter-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #08080a;
+    color: #e4e4e7;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Subtle radial glow behind the cards */
+  body::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -55%);
+    width: 900px;
+    height: 500px;
+    background: radial-gradient(ellipse at center, rgba(59,130,246,0.04) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* Noise texture overlay */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  .page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 48px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ---- Header ---- */
+  .header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .header-badge {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #f59e0b;
+    background: rgba(245, 158, 11, 0.06);
+    border: 1px solid rgba(245, 158, 11, 0.12);
+    padding: 5px 14px;
+    border-radius: 100px;
+  }
+
+  .header h1 {
+    font-family: 'Cal Sans', sans-serif;
+    font-size: 28px;
+    font-weight: 600;
+    color: #fafafa;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  .header p {
+    font-size: 13.5px;
+    color: #52525b;
+    max-width: 460px;
+    line-height: 1.5;
+  }
+
+  /* ---- Cards row ---- */
+  .cards-row {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+
+  .card-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    position: relative;
+  }
+
+  /* Session number — monospaced, code-like */
+  .session-num {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #3f3f46;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Connector line from label to card */
+  .card-col::after {
+    content: '';
+    position: absolute;
+    top: 18px;
+    left: 50%;
+    width: 1px;
+    height: 10px;
+    background: #27272a;
+  }
+
+  /* ---- Cards ---- */
+  .card {
+    width: 272px;
+    background: #111113;
+    border: 1px solid #1e1e22;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  /* Highlight glow on the baseline card */
+  .card-col:first-child .card {
+    box-shadow: 0 0 0 1px rgba(34,197,94,0.08), 0 4px 24px -4px rgba(0,0,0,0.4);
+  }
+
+  /* Drift cards get a subtle amber tint on border */
+  .card-col:not(:first-child) .card {
+    border-color: rgba(245, 158, 11, 0.08);
+    box-shadow: 0 4px 24px -4px rgba(0,0,0,0.3);
+  }
+
+  .card-icon-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .card-icon-wrap svg {
+    stroke: currentColor;
+    stroke-width: 1.5;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .card-title {
+    font-family: 'Cal Sans', sans-serif;
+    color: #fafafa;
+    line-height: 1.25;
+  }
+
+  .card-body {
+    color: #71717a;
+    line-height: 1.6;
+  }
+
+  .card-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+
+  .card-badge .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #3b82f6;
+    flex-shrink: 0;
+  }
+
+  /* ---- Per-session overrides ---- */
+
+  /* Session 1 — the baseline / "correct" version */
+  .card-1 {
+    border-radius: 12px;
+    padding: 24px;
+    gap: 14px;
+  }
+  .card-1 .card-icon-wrap {
+    width: 40px; height: 40px;
+    color: #3b82f6;
+    background: rgba(59,130,246, 0.08);
+    border-radius: 10px;
+  }
+  .card-1 .card-icon-wrap svg { width: 20px; height: 20px; }
+  .card-1 .card-title { font-size: 17px; }
+  .card-1 .card-body { font-size: 13.5px; }
+  .card-1 .card-badge {
+    color: #3b82f6;
+    background: rgba(59,130,246,0.06);
+    border: 1px solid rgba(59,130,246,0.12);
+    padding: 4px 10px;
+    border-radius: 6px;
+  }
+
+  /* Session 2 — tighter, heavier */
+  .card-2 {
+    border-radius: 14px;
+    padding: 20px;
+    gap: 12px;
+  }
+  .card-2 .card-icon-wrap {
+    width: 42px; height: 42px;
+    color: #3b82f6;
+    background: rgba(59,130,246, 0.1);
+    border-radius: 12px;
+  }
+  .card-2 .card-icon-wrap svg { width: 22px; height: 22px; }
+  .card-2 .card-title { font-size: 16px; }
+  .card-2 .card-body { font-size: 13px; }
+  .card-2 .card-badge {
+    color: #3b82f6;
+    background: rgba(59,130,246,0.08);
+    border: 1px solid rgba(59,130,246,0.15);
+    padding: 5px 12px;
+    border-radius: 8px;
+  }
+
+  /* Session 3 — airier, lighter weight feel */
+  .card-3 {
+    border-radius: 16px;
+    padding: 28px;
+    gap: 16px;
+  }
+  .card-3 .card-icon-wrap {
+    width: 44px; height: 44px;
+    color: #3b82f6;
+    background: rgba(59,130,246,0.06);
+    border-radius: 14px;
+  }
+  .card-3 .card-icon-wrap svg { width: 20px; height: 20px; }
+  .card-3 .card-title { font-size: 18px; }
+  .card-3 .card-body { font-size: 14px; }
+  .card-3 .card-badge {
+    color: #3b82f6;
+    background: rgba(59,130,246,0.05);
+    border: 1px solid rgba(59,130,246,0.1);
+    padding: 3px 10px;
+    border-radius: 4px;
+  }
+
+  /* Session 4 — sharper, denser */
+  .card-4 {
+    border-radius: 8px;
+    padding: 22px;
+    gap: 10px;
+  }
+  .card-4 .card-icon-wrap {
+    width: 36px; height: 36px;
+    color: #3b82f6;
+    background: rgba(59,130,246,0.12);
+    border-radius: 8px;
+  }
+  .card-4 .card-icon-wrap svg { width: 18px; height: 18px; }
+  .card-4 .card-title { font-size: 16.5px; letter-spacing: -0.01em; }
+  .card-4 .card-body { font-size: 12.5px; }
+  .card-4 .card-badge {
+    color: #3b82f6;
+    background: rgba(59,130,246,0.08);
+    border: 1px solid rgba(59,130,246,0.14);
+    padding: 4px 10px;
+    border-radius: 100px;
+  }
+
+  /* ---- Annotation bar below each card ---- */
+  .annotations {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    justify-content: center;
+    max-width: 272px;
+  }
+
+  .anno {
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    padding: 3px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .anno--ok {
+    color: #4ade80;
+    background: rgba(74, 222, 128, 0.06);
+    border: 1px solid rgba(74, 222, 128, 0.1);
+  }
+
+  .anno--drift {
+    color: #fbbf24;
+    background: rgba(251, 191, 36, 0.06);
+    border: 1px solid rgba(251, 191, 36, 0.1);
+  }
+
+  /* ---- Measurement lines (redlines between cards) ---- */
+  .redline {
+    position: absolute;
+    pointer-events: none;
+  }
+
+  /* ---- Footer caption ---- */
+  .footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .caption {
+    font-size: 14px;
+    color: #52525b;
+    font-style: italic;
+    letter-spacing: -0.01em;
+  }
+
+  .caption em {
+    color: #71717a;
+    font-style: normal;
+  }
+
+  /* Red-line style arrows between session 1 and others */
+  .drift-arrows {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: -8px;
+  }
+
+  .drift-arrow {
+    width: 80px;
+    height: 1px;
+    position: relative;
+  }
+
+  .drift-arrow::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(245,158,11,0.3), rgba(245,158,11,0));
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <span class="header-badge">Design Drift</span>
+    <h1>Same component, four sessions</h1>
+    <p>Each card was generated by the same AI agent in a different session. Same prompt. Same intent. Subtly different output every time.</p>
+  </div>
+
+  <!-- Cards -->
+  <div class="cards-row">
+
+    <!-- Session 1: Baseline -->
+    <div class="card-col">
+      <span class="session-num">Session 01</span>
+      <div class="card card-1">
+        <div class="card-icon-wrap">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+        </div>
+        <div class="card-title">Unified Dashboard</div>
+        <div class="card-body">Manage all your domains from a single, intuitive interface across every registrar.</div>
+        <div><span class="card-badge"><span class="dot"></span> Core Feature</span></div>
+      </div>
+      <div class="annotations">
+        <span class="anno anno--ok">baseline</span>
+      </div>
+    </div>
+
+    <!-- Session 2 -->
+    <div class="card-col">
+      <span class="session-num">Session 02</span>
+      <div class="card card-2">
+        <div class="card-icon-wrap">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+        </div>
+        <div class="card-title">Unified Dashboard</div>
+        <div class="card-body">Manage all your domains from a single, intuitive interface across every registrar.</div>
+        <div><span class="card-badge"><span class="dot"></span> Core Feature</span></div>
+      </div>
+      <div class="annotations">
+        <span class="anno anno--drift">radius +2px</span>
+        <span class="anno anno--drift">font-weight 700</span>
+        <span class="anno anno--drift">padding -4px</span>
+      </div>
+    </div>
+
+    <!-- Session 3 -->
+    <div class="card-col">
+      <span class="session-num">Session 03</span>
+      <div class="card card-3">
+        <div class="card-icon-wrap">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+        </div>
+        <div class="card-title">Unified Dashboard</div>
+        <div class="card-body">Manage all your domains from a single, intuitive interface across every registrar.</div>
+        <div><span class="card-badge"><span class="dot"></span> Core Feature</span></div>
+      </div>
+      <div class="annotations">
+        <span class="anno anno--drift">radius +4px</span>
+        <span class="anno anno--drift">title 18px</span>
+        <span class="anno anno--drift">padding +4px</span>
+      </div>
+    </div>
+
+    <!-- Session 4 -->
+    <div class="card-col">
+      <span class="session-num">Session 04</span>
+      <div class="card card-4">
+        <div class="card-icon-wrap">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+        </div>
+        <div class="card-title">Unified Dashboard</div>
+        <div class="card-body">Manage all your domains from a single, intuitive interface across every registrar.</div>
+        <div><span class="card-badge"><span class="dot"></span> Core Feature</span></div>
+      </div>
+      <div class="annotations">
+        <span class="anno anno--drift">radius 8px</span>
+        <span class="anno anno--drift">icon -4px</span>
+        <span class="anno anno--drift">tag: pill</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Caption -->
+  <div class="footer">
+    <p class="caption"><em>Same component. Four agent sessions.</em> Spot the differences.</p>
+  </div>
+
+</div>
+
+</body>
+</html>

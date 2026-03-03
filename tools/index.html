@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code Screenshot Generator</title>
+<meta name="description" content="Create beautiful terminal mockups of Claude Code sessions. Customize, share, and screenshot.">
+<style>
+  /* ========== Reset & Base ========== */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #08080a;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 40px;
+    position: relative;
+    overflow-x: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+    color: #a1a1aa;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 800px;
+    height: 500px;
+    background: radial-gradient(ellipse at center, rgba(167,139,250,0.035) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 200;
+  }
+
+  /* ========== Terminal ========== */
+  .terminal {
+    max-width: 940px;
+    width: 100%;
+    background: #0c0c14;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.06);
+    box-shadow: 0 25px 80px -16px rgba(0,0,0,0.7), 0 0 1px 0 rgba(255,255,255,0.03), inset 0 1px 0 rgba(255,255,255,0.02);
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+    transition: transform 0.3s ease;
+  }
+
+  .titlebar {
+    height: 38px;
+    background: #13131c;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    position: relative;
+    user-select: none;
+  }
+
+  .dots { display: flex; gap: 8px; }
+  .dots span { width: 12px; height: 12px; border-radius: 50%; }
+  .dot-r { background: #ff5f57; }
+  .dot-y { background: #febc2e; }
+  .dot-g { background: #28c840; }
+
+  .title-label {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 12.5px;
+    color: #3f3f46;
+    letter-spacing: 0.01em;
+  }
+
+  .term {
+    padding: 20px 24px 26px;
+    font-family: 'SF Mono', 'Menlo', 'Monaco', 'Cascadia Code', 'Consolas', 'Liberation Mono', monospace;
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: #a1a1aa;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ========== Terminal Content Styles ========== */
+  .cc-hdr { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 18px; }
+  .cc-logo { color: #e87461; line-height: 1.1; font-size: 15px; flex-shrink: 0; white-space: pre; }
+  .cc-info { line-height: 1.55; }
+  .cc-name { color: #f4f4f5; font-weight: 600; }
+  .cc-ver { color: #71717a; }
+  .cc-model { color: #52525b; }
+  .cc-path { color: #3f3f46; }
+
+  .ln { white-space: pre-wrap; word-break: break-word; }
+  .gap { height: 8px; }
+  .pr { color: #e4e4e7; margin-top: 10px; }
+  .gt { color: #60a5fa; font-weight: 700; }
+  .pr-c { color: #e4e4e7; padding-left: 18px; }
+  .cm { margin-top: 10px; }
+  .ci { color: #a78bfa; }
+  .ct { color: #d4d4d8; }
+  .cm-c { padding-left: 18px; color: #d4d4d8; }
+  .tc { padding-left: 22px; }
+  .cn { color: #3f3f46; }
+  .ta { color: #a1a1aa; font-weight: 500; }
+  .fp { color: #67e8f9; }
+  .mt { color: #52525b; }
+  .ok { color: #4ade80; font-weight: 600; }
+  .ts { padding-left: 42px; color: #52525b; font-style: italic; }
+
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.15; } }
+  .spin { color: #a78bfa; animation: pulse 1.4s ease-in-out infinite; font-weight: 600; }
+
+  /* ========== Toolbar ========== */
+  .toolbar {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    gap: 6px;
+    z-index: 50;
+    transition: opacity 0.2s;
+  }
+
+  .toolbar button {
+    background: #1c1c24;
+    border: 1px solid rgba(255,255,255,0.08);
+    color: #a1a1aa;
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .toolbar button:hover { background: #26262e; color: #e4e4e7; border-color: rgba(255,255,255,0.12); }
+  .toolbar button.active { background: #a78bfa; color: #0c0c14; border-color: #a78bfa; }
+
+  /* ========== Editor Panel ========== */
+  .editor {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 380px;
+    height: 100vh;
+    background: #111118;
+    border-left: 1px solid rgba(255,255,255,0.06);
+    z-index: 100;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+  }
+  .editor.open { transform: translateX(0); }
+
+  .editor-head {
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .editor-head h2 { font-size: 15px; font-weight: 600; color: #e4e4e7; }
+  .editor-close {
+    background: none;
+    border: none;
+    color: #71717a;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+  .editor-close:hover { color: #e4e4e7; background: rgba(255,255,255,0.05); }
+
+  .editor-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 20px 80px;
+  }
+
+  .ed-section { margin-bottom: 24px; }
+  .ed-section h3 {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #52525b;
+    margin-bottom: 12px;
+  }
+
+  .ed-field { margin-bottom: 10px; }
+  .ed-field label {
+    display: block;
+    font-size: 12px;
+    color: #71717a;
+    margin-bottom: 4px;
+  }
+  .ed-field input, .ed-field textarea, .ed-field select {
+    width: 100%;
+    background: #0c0c14;
+    border: 1px solid rgba(255,255,255,0.08);
+    color: #d4d4d8;
+    padding: 7px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: 'SF Mono', 'Menlo', monospace;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .ed-field input:focus, .ed-field textarea:focus, .ed-field select:focus {
+    border-color: rgba(167,139,250,0.4);
+  }
+  .ed-field textarea { resize: vertical; min-height: 52px; line-height: 1.4; }
+  .ed-field select { cursor: pointer; }
+
+  /* Block cards */
+  .block-card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    transition: border-color 0.15s;
+  }
+  .block-card:hover { border-color: rgba(255,255,255,0.1); }
+
+  .block-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .block-head select {
+    background: #0c0c14;
+    border: 1px solid rgba(255,255,255,0.08);
+    color: #a1a1aa;
+    padding: 4px 8px;
+    border-radius: 5px;
+    font-size: 12px;
+    cursor: pointer;
+    outline: none;
+  }
+  .block-actions { display: flex; gap: 2px; }
+  .block-actions button {
+    background: none;
+    border: none;
+    color: #52525b;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: inherit;
+  }
+  .block-actions button:hover { color: #e4e4e7; background: rgba(255,255,255,0.05); }
+  .block-actions button.del:hover { color: #f87171; }
+
+  .block-fields { display: flex; flex-direction: column; gap: 6px; }
+  .block-fields input, .block-fields textarea, .block-fields select {
+    width: 100%;
+    background: #0c0c14;
+    border: 1px solid rgba(255,255,255,0.06);
+    color: #d4d4d8;
+    padding: 5px 8px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-family: 'SF Mono', 'Menlo', monospace;
+    outline: none;
+  }
+  .block-fields textarea { resize: vertical; min-height: 40px; line-height: 1.3; }
+  .block-fields .field-row { display: flex; gap: 6px; }
+  .block-fields .field-row select { width: auto; min-width: 90px; }
+  .block-fields label {
+    font-size: 10px;
+    color: #52525b;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 2px;
+    display: block;
+  }
+
+  .add-block {
+    display: flex;
+    gap: 6px;
+    margin-top: 12px;
+  }
+  .add-block select {
+    flex: 1;
+    background: #0c0c14;
+    border: 1px solid rgba(255,255,255,0.08);
+    color: #a1a1aa;
+    padding: 6px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    outline: none;
+  }
+  .add-block button {
+    background: #a78bfa;
+    color: #0c0c14;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .add-block button:hover { background: #b9a3fb; }
+
+  .ed-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .ed-actions button {
+    flex: 1;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: #0c0c14;
+    color: #a1a1aa;
+  }
+  .ed-actions button:hover { background: #1c1c24; color: #e4e4e7; }
+
+  /* ========== Screenshot Hint ========== */
+  .screenshot-hint {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.8);
+    color: #71717a;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 12px;
+    z-index: 150;
+    display: none;
+    backdrop-filter: blur(8px);
+  }
+  .screenshot-hint kbd {
+    background: rgba(255,255,255,0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: inherit;
+    color: #a1a1aa;
+  }
+
+  /* ========== Toast ========== */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: #1c1c24;
+    color: #e4e4e7;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    z-index: 150;
+    border: 1px solid rgba(255,255,255,0.08);
+    transition: transform 0.3s ease;
+    pointer-events: none;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ========== Screenshot mode ========== */
+  body.screenshot-mode .toolbar,
+  body.screenshot-mode .editor { opacity: 0; pointer-events: none; }
+  body.screenshot-mode .screenshot-hint { display: block; }
+</style>
+</head>
+<body>
+
+<!-- Toolbar -->
+<div class="toolbar" id="toolbar">
+  <button onclick="toggleEditor()" id="btn-edit">Edit</button>
+  <button onclick="shareConfig()">Share</button>
+  <button onclick="toggleScreenshotMode()">Screenshot</button>
+</div>
+
+<!-- Terminal -->
+<div class="terminal" id="terminal">
+  <div class="titlebar">
+    <div class="dots">
+      <span class="dot-r"></span>
+      <span class="dot-y"></span>
+      <span class="dot-g"></span>
+    </div>
+    <span class="title-label" id="title-label"></span>
+  </div>
+  <div class="term" id="term"></div>
+</div>
+
+<!-- Editor Panel -->
+<div class="editor" id="editor">
+  <div class="editor-head">
+    <h2>Edit Terminal</h2>
+    <button class="editor-close" onclick="toggleEditor()">&times;</button>
+  </div>
+  <div class="editor-body" id="editor-body"></div>
+</div>
+
+<!-- Screenshot hint -->
+<div class="screenshot-hint" id="screenshot-hint">
+  Press <kbd>Escape</kbd> to exit screenshot mode
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ========== Default Config ==========
+const DEFAULT_CONFIG = {
+  header: {
+    version: 'v2.1.63',
+    model: 'Opus 4.6',
+    tier: 'Claude Max',
+    path: '~/Projects/CollectiveDomains/collective.domains'
+  },
+  titlebar: 'collective.domains — zsh — 120×36',
+  blocks: [
+    { type: 'prompt', text: 'Redesign the features pages with dedicated detail pages for each feature,\nunique accent colors, benefit sections, and an integrations hub.' },
+    { type: 'gap' },
+    { type: 'message', text: "I'll plan this redesign. Let me explore the current structure." },
+    { type: 'tool', action: 'Read', path: 'app/(marketing)/features/page.tsx', meta: '(186 lines)', status: '' },
+    { type: 'tool', action: 'Read', path: 'lib/features-data.ts', meta: '(94 lines)', status: '' },
+    { type: 'tool', action: 'Glob', path: 'components/marketing/features/**', meta: 'found 8 files matching', status: '' },
+    { type: 'gap' },
+    { type: 'message', text: 'Building shared components and data layer first.' },
+    { type: 'tool', action: 'Write', path: 'lib/features-data.ts', meta: '(+186 lines)', status: '' },
+    { type: 'summary', text: 'Added feature definitions with accent colors, benefits, and integrations' },
+    { type: 'tool', action: 'Write', path: 'components/marketing/feature-hero.tsx', meta: '(92 lines)', status: '' },
+    { type: 'tool', action: 'Write', path: 'components/marketing/feature-benefits.tsx', meta: '(78 lines)', status: '' },
+    { type: 'tool', action: 'Write', path: 'components/marketing/feature-integrations.tsx', meta: '(104 lines)', status: '' },
+    { type: 'gap' },
+    { type: 'message', text: 'Creating the six feature detail pages.' },
+    { type: 'tool', action: 'Write', path: 'app/(marketing)/features/dashboard/page.tsx', meta: '(156 lines)', status: 'done' },
+    { type: 'tool', action: 'Write', path: 'app/(marketing)/features/auto-sync/page.tsx', meta: '(148 lines)', status: 'done' },
+    { type: 'tool', action: 'Write', path: 'app/(marketing)/features/nameservers/page.tsx', meta: '(152 lines)', status: 'done' },
+    { type: 'tool', action: 'Write', path: 'app/(marketing)/features/dns-management/page.tsx', meta: '(164 lines)', status: 'done' },
+    { type: 'tool', action: 'Write', path: 'app/(marketing)/features/whois-privacy/page.tsx', meta: '(144 lines)', status: 'done' },
+    { type: 'tool', action: 'Write', path: 'app/(marketing)/features/security/page.tsx', meta: '(158 lines)', status: 'done' },
+    { type: 'gap' },
+    { type: 'message', text: 'Feature pages done. Building the integrations hub with registrar cards\nand feature support matrix.' },
+    { type: 'tool', action: 'Write', path: 'app/(marketing)/integrations/page.tsx', meta: '', status: 'progress' }
+  ]
+};
+
+let config = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+let editorOpen = false;
+let screenshotMode = false;
+
+// ========== Helpers ==========
+function esc(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2000);
+}
+
+// ========== Render Terminal ==========
+function renderTerminal() {
+  const term = document.getElementById('term');
+  const h = config.header;
+
+  document.getElementById('title-label').textContent = config.titlebar || '';
+
+  let html = `<div class="cc-hdr"><div class="cc-logo"> ▐▛███▜▌\n▝▜█████▛▘\n  ▘▘ ▝▝</div><div class="cc-info"><div><span class="cc-name">Claude Code</span> <span class="cc-ver">${esc(h.version)}</span></div><div class="cc-model">${esc(h.model)} · ${esc(h.tier)}</div><div class="cc-path">${esc(h.path)}</div></div></div>`;
+
+  for (const b of config.blocks) {
+    switch (b.type) {
+      case 'prompt': {
+        const lines = (b.text || '').split('\n');
+        html += `<div class="ln pr"><span class="gt">&gt;</span> ${esc(lines[0])}</div>`;
+        for (let i = 1; i < lines.length; i++) {
+          html += `<div class="ln pr-c">${esc(lines[i])}</div>`;
+        }
+        break;
+      }
+      case 'message': {
+        const lines = (b.text || '').split('\n');
+        html += `<div class="ln cm"><span class="ci">⏺</span> <span class="ct">${esc(lines[0])}</span></div>`;
+        for (let i = 1; i < lines.length; i++) {
+          html += `<div class="ln cm-c">${esc(lines[i])}</div>`;
+        }
+        break;
+      }
+      case 'tool': {
+        let content = `<span class="ta">${esc(b.action || 'Read')}</span> `;
+        const metaBefore = b.meta && /^[a-z]/i.test(b.meta);
+        if (metaBefore && b.meta) content += `<span class="mt">${esc(b.meta)}</span> `;
+        if (b.path) content += `<span class="fp">${esc(b.path)}</span>`;
+        if (!metaBefore && b.meta) content += ` <span class="mt">${esc(b.meta)}</span>`;
+        if (b.status === 'done') content += ' <span class="ok">✓</span>';
+        else if (b.status === 'progress') content += ' <span class="spin">⋯</span>';
+        html += `<div class="ln tc"><span class="cn">⎿</span>  ${content}</div>`;
+        break;
+      }
+      case 'summary':
+        html += `<div class="ln ts">${esc(b.text || '')}</div>`;
+        break;
+      case 'gap':
+        html += '<div class="gap"></div>';
+        break;
+    }
+  }
+
+  term.innerHTML = html;
+}
+
+// ========== Render Editor ==========
+function renderEditor() {
+  const body = document.getElementById('editor-body');
+  const h = config.header;
+
+  let html = `
+    <div class="ed-section">
+      <h3>Header</h3>
+      <div class="ed-field"><label>Version</label><input type="text" value="${esc(h.version)}" onchange="updateHeader('version', this.value)"></div>
+      <div class="ed-field"><label>Model</label><input type="text" value="${esc(h.model)}" onchange="updateHeader('model', this.value)"></div>
+      <div class="ed-field"><label>Tier</label><input type="text" value="${esc(h.tier)}" onchange="updateHeader('tier', this.value)"></div>
+      <div class="ed-field"><label>Path</label><input type="text" value="${esc(h.path)}" onchange="updateHeader('path', this.value)"></div>
+      <div class="ed-field"><label>Title Bar</label><input type="text" value="${esc(config.titlebar || '')}" onchange="config.titlebar=this.value;save();renderTerminal()"></div>
+    </div>
+
+    <div class="ed-section">
+      <h3>Content</h3>
+      <div id="blocks-list">${config.blocks.map((b, i) => renderBlockCard(b, i)).join('')}</div>
+      <div class="add-block">
+        <select id="add-type">
+          <option value="prompt">Prompt</option>
+          <option value="message">Message</option>
+          <option value="tool">Tool Call</option>
+          <option value="summary">Summary</option>
+          <option value="gap">Gap / Spacer</option>
+        </select>
+        <button onclick="addBlock()">+ Add</button>
+      </div>
+    </div>
+
+    <div class="ed-actions">
+      <button onclick="resetConfig()">Reset to Default</button>
+      <button onclick="clearConfig()">Clear All</button>
+    </div>`;
+
+  body.innerHTML = html;
+}
+
+function renderBlockCard(b, i) {
+  const types = ['prompt', 'message', 'tool', 'summary', 'gap'];
+  const typeOpts = types.map(t =>
+    `<option value="${t}"${t === b.type ? ' selected' : ''}>${t === 'tool' ? 'Tool Call' : t === 'gap' ? 'Gap' : t.charAt(0).toUpperCase() + t.slice(1)}</option>`
+  ).join('');
+
+  let fields = '';
+  switch (b.type) {
+    case 'prompt':
+    case 'message':
+    case 'summary':
+      fields = `<textarea oninput="updateBlock(${i},'text',this.value)">${esc(b.text || '')}</textarea>`;
+      break;
+    case 'tool': {
+      const actions = ['Read', 'Write', 'Edit', 'Glob', 'Grep', 'Bash', 'Agent'];
+      const statuses = [['', 'None'], ['done', '✓ Done'], ['progress', '⋯ In Progress']];
+      fields = `
+        <div class="field-row">
+          <div style="flex:1"><label>Action</label><select onchange="updateBlock(${i},'action',this.value)">${actions.map(a => `<option${a === b.action ? ' selected' : ''}>${a}</option>`).join('')}</select></div>
+          <div style="flex:1"><label>Status</label><select onchange="updateBlock(${i},'status',this.value)">${statuses.map(([v, l]) => `<option value="${v}"${v === (b.status || '') ? ' selected' : ''}>${l}</option>`).join('')}</select></div>
+        </div>
+        <div><label>File Path</label><input type="text" value="${esc(b.path || '')}" oninput="updateBlock(${i},'path',this.value)"></div>
+        <div><label>Details</label><input type="text" value="${esc(b.meta || '')}" oninput="updateBlock(${i},'meta',this.value)" placeholder="(156 lines)"></div>`;
+      break;
+    }
+    case 'gap':
+      fields = '<span style="font-size:11px;color:#52525b">Empty spacer between sections</span>';
+      break;
+  }
+
+  return `<div class="block-card">
+    <div class="block-head">
+      <select onchange="changeBlockType(${i},this.value)">${typeOpts}</select>
+      <div class="block-actions">
+        <button onclick="moveBlock(${i},-1)" title="Move up">↑</button>
+        <button onclick="moveBlock(${i},1)" title="Move down">↓</button>
+        <button class="del" onclick="removeBlock(${i})" title="Delete">×</button>
+      </div>
+    </div>
+    <div class="block-fields">${fields}</div>
+  </div>`;
+}
+
+// ========== Editor Actions ==========
+function updateHeader(field, value) {
+  config.header[field] = value;
+  save();
+  renderTerminal();
+}
+
+function updateBlock(index, field, value) {
+  config.blocks[index][field] = value;
+  save();
+  renderTerminal();
+}
+
+function changeBlockType(index, newType) {
+  const old = config.blocks[index];
+  const base = { type: newType };
+  if (newType === 'prompt' || newType === 'message' || newType === 'summary') {
+    base.text = old.text || old.path || '';
+  } else if (newType === 'tool') {
+    base.action = 'Read';
+    base.path = old.text || old.path || '';
+    base.meta = '';
+    base.status = '';
+  }
+  config.blocks[index] = base;
+  save();
+  renderTerminal();
+  renderEditor();
+}
+
+function addBlock() {
+  const type = document.getElementById('add-type').value;
+  const block = { type };
+  if (type === 'prompt' || type === 'message' || type === 'summary') block.text = '';
+  if (type === 'tool') { block.action = 'Read'; block.path = ''; block.meta = ''; block.status = ''; }
+  config.blocks.push(block);
+  save();
+  renderTerminal();
+  renderEditor();
+  // Scroll to bottom of blocks list
+  setTimeout(() => {
+    const list = document.getElementById('blocks-list');
+    if (list) list.lastElementChild?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 50);
+}
+
+function removeBlock(index) {
+  config.blocks.splice(index, 1);
+  save();
+  renderTerminal();
+  renderEditor();
+}
+
+function moveBlock(index, dir) {
+  const newIndex = index + dir;
+  if (newIndex < 0 || newIndex >= config.blocks.length) return;
+  const [block] = config.blocks.splice(index, 1);
+  config.blocks.splice(newIndex, 0, block);
+  save();
+  renderTerminal();
+  renderEditor();
+}
+
+function resetConfig() {
+  config = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+  save();
+  renderTerminal();
+  renderEditor();
+  toast('Reset to default');
+}
+
+function clearConfig() {
+  config.blocks = [];
+  save();
+  renderTerminal();
+  renderEditor();
+  toast('Cleared all blocks');
+}
+
+// ========== UI Toggles ==========
+function toggleEditor() {
+  editorOpen = !editorOpen;
+  document.getElementById('editor').classList.toggle('open', editorOpen);
+  document.getElementById('btn-edit').classList.toggle('active', editorOpen);
+  if (editorOpen) renderEditor();
+}
+
+function toggleScreenshotMode() {
+  screenshotMode = !screenshotMode;
+  document.body.classList.toggle('screenshot-mode', screenshotMode);
+}
+
+// ========== Persistence ==========
+function save() {
+  try { localStorage.setItem('cc-screenshot-config', JSON.stringify(config)); } catch(e) {}
+}
+
+function loadFromStorage() {
+  try {
+    const stored = localStorage.getItem('cc-screenshot-config');
+    if (stored) return JSON.parse(stored);
+  } catch(e) {}
+  return null;
+}
+
+// ========== URL Sharing ==========
+function shareConfig() {
+  const json = JSON.stringify(config);
+  const encoded = btoa(unescape(encodeURIComponent(json)));
+  const url = window.location.origin + window.location.pathname + '#' + encoded;
+  navigator.clipboard.writeText(url).then(() => {
+    toast('Share link copied to clipboard');
+  }).catch(() => {
+    // Fallback: show URL
+    prompt('Copy this share link:', url);
+  });
+}
+
+function loadFromHash() {
+  try {
+    const hash = window.location.hash.slice(1);
+    if (!hash) return null;
+    const json = decodeURIComponent(escape(atob(hash)));
+    return JSON.parse(json);
+  } catch(e) { return null; }
+}
+
+// ========== Keyboard Shortcuts ==========
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    if (screenshotMode) toggleScreenshotMode();
+    else if (editorOpen) toggleEditor();
+  }
+});
+
+// ========== Init ==========
+function init() {
+  // Priority: URL hash > localStorage > default
+  const fromHash = loadFromHash();
+  const fromStorage = loadFromStorage();
+
+  if (fromHash) {
+    config = fromHash;
+    // Clear hash after loading so URL stays clean
+    history.replaceState(null, '', window.location.pathname);
+    toast('Loaded shared configuration');
+  } else if (fromStorage) {
+    config = fromStorage;
+  }
+
+  renderTerminal();
+}
+
+init();
+</script>
+
+</body>
+</html>

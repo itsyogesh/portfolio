@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code Terminal</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #08080a;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Subtle purple glow behind terminal */
+  body::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 800px;
+    height: 500px;
+    background: radial-gradient(ellipse at center, rgba(167,139,250,0.035) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* Noise texture overlay */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  .terminal {
+    max-width: 940px;
+    width: 100%;
+    background: #0c0c14;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.06);
+    box-shadow:
+      0 25px 80px -16px rgba(0,0,0,0.7),
+      0 0 1px 0 rgba(255,255,255,0.03),
+      inset 0 1px 0 rgba(255,255,255,0.02);
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ---- Title bar ---- */
+  .titlebar {
+    height: 38px;
+    background: #13131c;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    position: relative;
+    user-select: none;
+  }
+
+  .dots {
+    display: flex;
+    gap: 8px;
+  }
+
+  .dots span {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+
+  .dot-r { background: #ff5f57; }
+  .dot-y { background: #febc2e; }
+  .dot-g { background: #28c840; }
+
+  .title-label {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+    font-size: 12.5px;
+    color: #3f3f46;
+    letter-spacing: 0.01em;
+  }
+
+  /* ---- Terminal content ---- */
+  .term {
+    padding: 20px 24px 26px;
+    font-family: 'SF Mono', 'Menlo', 'Monaco', 'Cascadia Code', 'Consolas', 'Liberation Mono', monospace;
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: #a1a1aa;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* ---- Claude Code header ---- */
+  .cc-hdr {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    margin-bottom: 18px;
+  }
+
+  .cc-logo {
+    color: #e87461;
+    line-height: 1.1;
+    font-size: 15px;
+    flex-shrink: 0;
+    white-space: pre;
+  }
+
+  .cc-info {
+    line-height: 1.55;
+  }
+
+  .cc-name { color: #f4f4f5; font-weight: 600; }
+  .cc-ver { color: #71717a; }
+  .cc-model { color: #52525b; }
+  .cc-path { color: #3f3f46; }
+
+  /* ---- Line types ---- */
+  .ln { white-space: pre-wrap; word-break: break-word; }
+  .gap { height: 8px; }
+
+  /* User prompt */
+  .pr { color: #e4e4e7; margin-top: 10px; }
+  .gt { color: #60a5fa; font-weight: 700; }
+  .pr-c { color: #e4e4e7; padding-left: 18px; }
+
+  /* Claude message */
+  .cm { margin-top: 10px; }
+  .ci { color: #a78bfa; }
+  .ct { color: #d4d4d8; }
+  .cm-c { padding-left: 18px; color: #d4d4d8; }
+
+  /* Tool calls */
+  .tc { padding-left: 22px; }
+  .cn { color: #3f3f46; }
+  .ta { color: #a1a1aa; font-weight: 500; }
+  .fp { color: #67e8f9; }
+  .mt { color: #52525b; }
+  .ok { color: #4ade80; font-weight: 600; }
+
+  /* Summary line under a tool call */
+  .ts { padding-left: 42px; color: #52525b; font-style: italic; }
+
+  /* Blinking cursor / spinner */
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.15; }
+  }
+  .spin {
+    color: #a78bfa;
+    animation: pulse 1.4s ease-in-out infinite;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<div class="terminal">
+  <div class="titlebar">
+    <div class="dots">
+      <span class="dot-r"></span>
+      <span class="dot-y"></span>
+      <span class="dot-g"></span>
+    </div>
+    <span class="title-label">collective.domains — zsh — 120×36</span>
+  </div>
+
+  <div class="term">
+
+    <!-- Claude Code Header -->
+    <div class="cc-hdr">
+      <div class="cc-logo"> ▐▛███▜▌
+▝▜█████▛▘
+  ▘▘ ▝▝</div>
+      <div class="cc-info">
+        <div><span class="cc-name">Claude Code</span> <span class="cc-ver">v2.1.63</span></div>
+        <div class="cc-model">Opus 4.6 · Claude Max</div>
+        <div class="cc-path">~/Projects/CollectiveDomains/collective.domains</div>
+      </div>
+    </div>
+
+    <!-- User Prompt -->
+    <div class="ln pr"><span class="gt">&gt;</span> Redesign the features pages with dedicated detail pages for each feature,</div>
+    <div class="ln pr-c">unique accent colors, benefit sections, and an integrations hub.</div>
+
+    <div class="gap"></div>
+
+    <!-- Claude Response 1: Reading -->
+    <div class="ln cm"><span class="ci">⏺</span> <span class="ct">I'll plan this redesign. Let me explore the current structure.</span></div>
+    <div class="gap" style="height:4px"></div>
+    <div class="ln tc"><span class="cn">⎿</span>  <span class="ta">Read</span> <span class="fp">app/(marketing)/features/page.tsx</span> <span class="mt">(186 lines)</span></div>
+    <div class="ln tc"><span class="cn">⎿</span>  <span class="ta">Read</span> <span class="fp">lib/features-data.ts</span> <span class="mt">(94 lines)</span></div>
+    <div class="ln tc"><span class="cn">⎿</span>  <span class="ta">Glob</span> <span class="mt">found 8 files matching</span> <span class="fp">components/marketing/features/**</span></div>
+
+    <div class="gap"></div>
+
+    <!-- Claude Response 2: Writing shared components -->
+    <div class="ln cm"><span class="ci">⏺</span> <span class="ct">Building shared components and data layer first.</span></div>
+    <div class="gap" style="height:4px"></div>
+    <div class="ln tc"><span class="cn">⎿</span>  <span class="ta">Write</span> <span class="fp">lib/features-data.ts</span> <span class="mt">(+186 lines)</span></div>
+    <div class="ln ts">Added feature definitions with accent colors, benefits, and integrations</div>
+    <div class="ln tc"><span class="cn">⎿</span>  <span class="ta">Write</span> <span class="fp">components/marketing/feature-hero.tsx</span> <span class="mt">(92 lines)</span></div>
+    <div class="ln tc"><span class="cn">⎿</span>  <span class="ta">Write</span> <span class="fp">components/marketing/feature-benefits.tsx</span> <span class="mt">(78 lines)</span></div>
+    <div class="ln tc"><span class="cn">⎿</span>  <span class="ta">Write</span> <span class="fp">components/marketing/feature-integrations.tsx</span> <span class="mt">(104 lines)</span></div>
+
+    <div class="gap"></div>
+
+    <!-- Claude Response 3: Writing feature pages -->
+    <div class="ln cm"><span class="ci">⏺</span> <span class="ct">Creating the six feature detail pages.</span></div>
+    <div class="gap" style="height:4px"></div>
+    <div class="ln tc"><span class="cn">⎿</span>  <span class="ta">Write</span> <span class="fp">app/(marketing)/features/dashboard/page.tsx</span> <span class="mt">(156 lines)</span> <span class="ok">✓</span></div>
+    <div class="ln tc"><span class="cn">⎿</span>  <span class="ta">Write</span> <span class="fp">app/(marketing)/features/auto-sync/page.tsx</span> <span class="mt">(148 lines)</span> <span class="ok">✓</span></div>
+    <div class="ln tc"><span class="cn">⎿</span>  <span class="ta">Write</span> <span class="fp">app/(marketing)/features/nameservers/page.tsx</span> <span class="mt">(152 lines)</span> <span class="ok">✓</span></div>
+    <div class="ln tc"><span class="cn">⎿</span>  <span class="ta">Write</span> <span class="fp">app/(marketing)/features/dns-management/page.tsx</span> <span class="mt">(164 lines)</span> <span class="ok">✓</span></div>
+    <div class="ln tc"><span class="cn">⎿</span>  <span class="ta">Write</span> <span class="fp">app/(marketing)/features/whois-privacy/page.tsx</span> <span class="mt">(144 lines)</span> <span class="ok">✓</span></div>
+    <div class="ln tc"><span class="cn">⎿</span>  <span class="ta">Write</span> <span class="fp">app/(marketing)/features/security/page.tsx</span> <span class="mt">(158 lines)</span> <span class="ok">✓</span></div>
+
+    <div class="gap"></div>
+
+    <!-- Claude Response 4: In progress -->
+    <div class="ln cm"><span class="ci">⏺</span> <span class="ct">Feature pages done. Building the integrations hub with registrar cards</span></div>
+    <div class="ln cm-c">and feature support matrix.</div>
+    <div class="gap" style="height:4px"></div>
+    <div class="ln tc"><span class="cn">⎿</span>  <span class="ta">Write</span> <span class="fp">app/(marketing)/integrations/page.tsx</span> <span class="spin">⋯</span></div>
+
+  </div>
+</div>
+
+</body>
+</html>
