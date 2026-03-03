@@ -1,0 +1,56 @@
+{
+  "categories": [
+    {
+      "name": "Development",
+      "items": [
+        { "name": "TypeScript", "description": "Primary language for everything" },
+        { "name": "Next.js", "description": "React framework for web apps" },
+        { "name": "React Native", "description": "Cross-platform mobile development" },
+        { "name": "Node.js", "description": "Server-side runtime" },
+        { "name": "Python/Django", "description": "Backend for Chargespot" },
+        { "name": "Go", "description": "OCPP/OCPI protocol servers" },
+        { "name": "Flutter/Dart", "description": "Mobile apps" },
+        { "name": "Prisma", "description": "Database ORM" },
+        { "name": "PostgreSQL", "description": "Primary database" },
+        { "name": "Tauri", "description": "Desktop apps with Rust" }
+      ]
+    },
+    {
+      "name": "AI & Tools",
+      "items": [
+        { "name": "Claude Code", "description": "Primary AI coding agent" },
+        { "name": "Cursor", "description": "AI-powered editor" },
+        { "name": "Paper", "description": "HTML-native design tool with MCP" },
+        { "name": "v0", "description": "UI generation" }
+      ]
+    },
+    {
+      "name": "Infrastructure",
+      "items": [
+        { "name": "Vercel", "description": "Deployment platform" },
+        { "name": "AWS", "description": "Cloud infrastructure for Chargespot" },
+        { "name": "Terraform", "description": "Infrastructure as code" },
+        { "name": "Firebase", "description": "Backend services" },
+        { "name": "GitHub", "description": "Version control and CI/CD" }
+      ]
+    },
+    {
+      "name": "Web3",
+      "items": [
+        { "name": "Polkadot/Substrate", "description": "Blockchain framework" },
+        { "name": "Dedot", "description": "Modern Substrate interaction library" },
+        { "name": "RainbowKit/Wagmi", "description": "Ethereum wallet integration" },
+        { "name": "Bitcoin Development Kit", "description": "BDK for Coinbox" }
+      ]
+    },
+    {
+      "name": "Design",
+      "items": [
+        { "name": "Tailwind CSS", "description": "Utility-first CSS" },
+        { "name": "shadcn/ui", "description": "Component library" },
+        { "name": "Figma", "description": "Design tool" },
+        { "name": "Radix UI", "description": "Accessible primitives" }
+      ]
+    }
+  ]
+}

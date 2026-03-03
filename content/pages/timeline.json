@@ -1,0 +1,16 @@
+[
+  { "year": "2011", "title": "Started engineering college", "description": "Joined MAIT for ECE. Started building apps for final-year students." },
+  { "year": "2013", "title": "Dropped out. Started building.", "description": "Left college, launched unstudious.com, moved to 91 Springboard coworking space. First job as founding engineer at SquadRun." },
+  { "year": "2013", "title": "Founded Unstudious", "description": "EdTech venture tackling book piracy. Got attention from Matrix Partners and Tracxn." },
+  { "year": "2014", "title": "Joined Paytm", "description": "Software Engineer on seller dashboard backend, then promoted to Growth Engineer working on deep-linking and price comparison." },
+  { "year": "2016", "title": "Went independent", "description": "Left Paytm, started contracting. React, React Native, blockchain projects. Joined G2i vetting platform." },
+  { "year": "2017", "title": "Deep into crypto", "description": "Built Steem blockchain commenting system, Komodo/Zcash wallet, card trading apps. Started exploring Web3." },
+  { "year": "2018", "title": "Joined Pei. Built Bitcharge.", "description": "Started 4-year contract with Pei (payment fintech). Launched Bitcharge v1 crypto payments platform. 195 users." },
+  { "year": "2019", "title": "Founded Droidsize", "description": "Registered Droidsize Technologies as a product development and consulting studio with Neeraj Kumar." },
+  { "year": "2021", "title": "Polkadot ecosystem", "description": "Received Kusama Treasury grants for Speck Wallet and Extrinsics.io. Entered Polkadot developer community." },
+  { "year": "2022", "title": "Flex (peak income), then pivot", "description": "Post-acquisition role at Flex at $15k/month. Laid off after 8 months. Chose startups over returning to employment." },
+  { "year": "2023", "title": "Founded Charge23 Labs", "description": "Incorporated Chargespot EV charging venture. DPIIT recognized, incubated at AIC Sangam. Team of 5." },
+  { "year": "2024", "title": "Relaycode W3F Grant", "description": "Web3 Foundation grant merged for Relaycode — modern Polkadot developer tooling. Redemption arc for earlier incomplete grants." },
+  { "year": "2025", "title": "Claude Code era", "description": "Started using AI agents extensively. GitHub output dramatically increased. Shipped Collective Domains, Merry Magic Mail (Product Hunt)." },
+  { "year": "2026", "title": "Building in public", "description": "Shipped Relaycode M2, building itsyogesh.fyi, competing at Polkadot hackathons with Unlockd." }
+]
