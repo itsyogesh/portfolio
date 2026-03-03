@@ -1,0 +1,45 @@
+{
+  "name": "itsyogesh-fyi",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev --filter=web --filter=backstage",
+    "dev:web": "turbo dev --filter=web",
+    "dev:backstage": "turbo dev --filter=backstage",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "clean": "git clean -xdf node_modules",
+    "bump-ui": "npx shadcn@latest add --all --overwrite -c packages/base",
+    "bookmarks:migrate": "tsx scripts/migrate-bookmarks.ts",
+    "bookmarks:extract": "tsx scripts/extract-bookmarks.ts",
+    "bookmarks:ai": "tsx scripts/ai-process-bookmarks.ts",
+    "seed:owner": "tsx scripts/seed-owner.ts",
+    "seed:content": "tsx scripts/seed-content.ts",
+    "stars:sync": "tsx scripts/sync-github-stars.ts",
+    "db:push": "cd packages/db && pnpm db:push",
+    "db:studio": "cd packages/db && pnpm db:studio"
+  },
+  "devDependencies": {
+    "@ai-sdk/openai": "^1.3.22",
+    "@biomejs/biome": "1.9.4",
+    "@extractus/article-extractor": "^8.0.0",
+    "@neondatabase/serverless": "^1.0.2",
+    "@prisma/adapter-neon": "7.1.0",
+    "@prisma/client": "7.1.0",
+    "@tooling/typescript-config": "workspace:*",
+    "@types/node": "^24.10.1",
+    "@types/ws": "^8.18.1",
+    "ai": "^6.0.0",
+    "dotenv": "^16.4.7",
+    "tsx": "^4.21.0",
+    "turbo": "^2.6.3",
+    "typescript": "^5.9.3",
+    "ws": "^8.18.3"
+  },
+  "engines": {
+    "node": ">=20.9"
+  },
+  "packageManager": "pnpm@10.11.0",
+  "type": "module"
+}

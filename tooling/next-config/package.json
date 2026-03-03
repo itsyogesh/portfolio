@@ -1,0 +1,12 @@
+{
+  "name": "@tooling/next-config",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "clean": "rm -rf node_modules .turbo"
+  },
+  "devDependencies": {
+    "@tooling/typescript-config": "workspace:*",
+    "next": "15.5.9"
+  }
+}
