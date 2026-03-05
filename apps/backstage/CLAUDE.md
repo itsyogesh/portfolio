@@ -2,6 +2,13 @@
 
 Next.js 16 with App Router, React 19, Tailwind 4. Owner-only admin for managing all portfolio content.
 
+# Route Groups
+
+- `app/(auth)/` — Sign-in page. Centered layout, no sidebar.
+- `app/(dashboard)/` — All admin pages. Sidebar + header layout.
+- `app/layout.tsx` — Bare shell: html/body/BaseProvider only.
+- API routes stay at `app/api/` (not inside route groups).
+
 # Auth
 
 - `app/api/_lib/auth.ts` — Two guards:
@@ -12,6 +19,8 @@ Next.js 16 with App Router, React 19, Tailwind 4. Owner-only admin for managing 
 - Every API route calls `await requireAdmin()` and checks `if (error) return error`.
 
 # Pages
+
+All under `app/(dashboard)/`.
 
 - `/` — Dashboard with stat cards for all content types
 - `/profile` — Edit name, headline, bio, avatar, socials
@@ -45,5 +54,6 @@ Each section follows: server page.tsx (fetches data) + client component forms (d
 
 - Does NOT use content-collections. Writing page reads MDX via filesystem (`node:fs`). Path: `process.env.CONTENT_DIR` or fallback `join(process.cwd(), '..', '..', 'content', 'articles')`.
 - Stars kanban uses `@hello-pangea/dnd` (React 19 compatible fork of react-beautiful-dnd).
-- Sidebar component is in `app/components/app-sidebar.tsx` (client component). Receives `userEmail` prop from layout.
-- Layout reads sidebar state from cookies and session from auth.
+- Sidebar component is in `app/components/app-sidebar.tsx` (client component). Receives `userEmail` prop from dashboard layout.
+- Dashboard layout reads sidebar state from cookies and session from auth.
+- Import paths from dashboard pages use `../../api/_lib/auth` (one level deep) or `../../../api/_lib/auth` (two levels deep like settings/connections).
