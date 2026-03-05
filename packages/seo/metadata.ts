@@ -34,7 +34,7 @@ export const createMetadata = ({
 
   const parsedTitle = `${title} | ${appName}`;
   const defaultMetadata: Metadata = {
-    title: parsedTitle,
+    title,
     description,
     applicationName: appName,
     metadataBase: productionUrl
