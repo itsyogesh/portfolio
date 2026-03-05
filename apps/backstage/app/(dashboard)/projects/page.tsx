@@ -1,4 +1,4 @@
-import { requireAdminPage } from '../api/_lib/auth';
+import { requireAdminPage } from '../../api/_lib/auth';
 import { database } from '@packages/db';
 import type { Metadata } from 'next';
 import { ProjectTable } from './components/project-table';

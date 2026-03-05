@@ -1,6 +1,6 @@
 import { database } from '@packages/db';
 import type { Metadata } from 'next';
-import { requireAdminPage } from '../api/_lib/auth';
+import { requireAdminPage } from '../../api/_lib/auth';
 import { TimelineEntryList } from './components/timeline-entry-list';
 import { TimelineForm } from './components/timeline-form';
 

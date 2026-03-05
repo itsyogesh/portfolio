@@ -1,4 +1,4 @@
-import { requireAdminPage } from '../api/_lib/auth';
+import { requireAdminPage } from '../../api/_lib/auth';
 import type { Metadata } from 'next';
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';

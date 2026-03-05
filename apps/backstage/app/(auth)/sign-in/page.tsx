@@ -29,7 +29,7 @@ export default function SignInPage() {
         return;
       }
 
-      router.push('/bookmarks');
+      router.push('/');
     } catch {
       setError('An unexpected error occurred');
     } finally {
