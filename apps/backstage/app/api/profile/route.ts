@@ -34,6 +34,8 @@ export async function PUT(request: NextRequest) {
         location: body.location || null,
         website: body.website || null,
         resumeUrl: body.resumeUrl || null,
+        email: body.email || null,
+        phone: body.phone || null,
       },
       update: {
         ...(body.name !== undefined && { name: body.name }),
@@ -49,6 +51,8 @@ export async function PUT(request: NextRequest) {
         ...(body.resumeUrl !== undefined && {
           resumeUrl: body.resumeUrl || null,
         }),
+        ...(body.email !== undefined && { email: body.email || null }),
+        ...(body.phone !== undefined && { phone: body.phone || null }),
       },
       include: { socials: { orderBy: { position: 'asc' } } },
     });

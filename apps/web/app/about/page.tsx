@@ -1,4 +1,5 @@
 import { database } from '@packages/db';
+import { JsonLd, type WithContext, type ProfilePage } from '@packages/seo/json-ld';
 import { createMetadata } from '@packages/seo/metadata';
 import type { Metadata } from 'next';
 import Markdown from 'react-markdown';
@@ -15,7 +16,7 @@ export const generateMetadata = async (): Promise<Metadata> => {
 };
 
 const AboutPage = async () => {
-  const [profile, timeline, projectCount, orgCount, accoladeCount] =
+  const [profile, timeline, projectCount, orgCount, accoladeCount, orgs, education, stackItems] =
     await Promise.all([
       getProfile(),
       database.timelineEntry.findMany({
@@ -24,6 +25,9 @@ const AboutPage = async () => {
       database.project.count(),
       database.organization.count(),
       database.accolade.count({ where: { type: 'hackathon' } }),
+      database.organization.findMany({ select: { name: true, website: true } }),
+      database.education.findMany({ select: { institution: true } }),
+      database.stackItem.findMany({ select: { name: true } }),
     ]);
 
   const stats = [
@@ -33,8 +37,34 @@ const AboutPage = async () => {
     { label: 'Ventures', value: String(orgCount || 6) },
   ];
 
+  const jsonLd: WithContext<ProfilePage> = {
+    '@context': 'https://schema.org',
+    '@type': 'ProfilePage',
+    mainEntity: {
+      '@type': 'Person',
+      name: profile?.name,
+      jobTitle: profile?.headline ?? undefined,
+      description: profile?.bio ?? undefined,
+      image: profile?.avatarUrl ?? undefined,
+      url: profile?.website ?? undefined,
+      email: profile?.email ?? undefined,
+      sameAs: profile?.socials.map((s) => s.url),
+      worksFor: orgs.map((o) => ({
+        '@type': 'Organization' as const,
+        name: o.name,
+        url: o.website ?? undefined,
+      })),
+      alumniOf: education.map((e) => ({
+        '@type': 'EducationalOrganization' as const,
+        name: e.institution,
+      })),
+      knowsAbout: stackItems.map((s) => s.name),
+    },
+  };
+
   return (
     <div className="mx-auto max-w-3xl px-6 py-16 space-y-16">
+      <JsonLd code={jsonLd} />
       <section className="space-y-6">
         <h1 className="text-3xl font-bold tracking-tight">About</h1>
         {profile?.bio ? (

@@ -37,6 +37,7 @@ const categories = [
   'fintech',
   'commerce',
 ];
+const kinds = ['product', 'client', 'oss', 'internal', 'experiment'];
 
 function slugify(text: string): string {
   return text
@@ -47,12 +48,15 @@ function slugify(text: string): string {
     .replace(/-+/g, '-');
 }
 
+type OrgOption = { id: string; name: string };
+
 type ProjectFormDialogProps = {
   project?: ProjectData;
+  organizations: OrgOption[];
   trigger: React.ReactNode;
 };
 
-export function ProjectFormDialog({ project, trigger }: ProjectFormDialogProps) {
+export function ProjectFormDialog({ project, organizations, trigger }: ProjectFormDialogProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -77,6 +81,14 @@ export function ProjectFormDialog({ project, trigger }: ProjectFormDialogProps) 
   );
   const [startDate, setStartDate] = useState(project?.startDate ?? '');
   const [endDate, setEndDate] = useState(project?.endDate ?? '');
+  const [kind, setKind] = useState(project?.kind ?? '');
+  const [role, setRole] = useState(project?.role ?? '');
+  const [highlightsInput, setHighlightsInput] = useState(
+    project?.highlights?.join(', ') ?? ''
+  );
+  const [organizationId, setOrganizationId] = useState(
+    project?.organizationId ?? ''
+  );
 
   const handleTitleChange = (value: string) => {
     setTitle(value);
@@ -101,6 +113,10 @@ export function ProjectFormDialog({ project, trigger }: ProjectFormDialogProps) 
       setPosition('0');
       setStartDate('');
       setEndDate('');
+      setKind('');
+      setRole('');
+      setHighlightsInput('');
+      setOrganizationId('');
     }
   };
 
@@ -111,6 +127,11 @@ export function ProjectFormDialog({ project, trigger }: ProjectFormDialogProps) 
     const techArray = techInput
       .split(',')
       .map((t) => t.trim())
+      .filter(Boolean);
+
+    const highlightsArray = highlightsInput
+      .split(',')
+      .map((h) => h.trim())
       .filter(Boolean);
 
     const payload = {
@@ -128,6 +149,10 @@ export function ProjectFormDialog({ project, trigger }: ProjectFormDialogProps) 
       position: Number.parseInt(position, 10) || 0,
       startDate: startDate || null,
       endDate: endDate || null,
+      kind: kind && kind !== 'none' ? kind : null,
+      role: role || null,
+      highlights: highlightsArray,
+      organizationId: organizationId && organizationId !== 'none' ? organizationId : null,
     };
 
     try {
@@ -273,6 +298,55 @@ export function ProjectFormDialog({ project, trigger }: ProjectFormDialogProps) 
             </div>
           </div>
 
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="space-y-1.5">
+              <Label>Organization</Label>
+              <Select value={organizationId} onValueChange={setOrganizationId}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select organization" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">
+                    <span className="text-muted-foreground">None</span>
+                  </SelectItem>
+                  {organizations.map((org) => (
+                    <SelectItem key={org.id} value={org.id}>
+                      {org.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label>Kind</Label>
+              <Select value={kind} onValueChange={setKind}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select kind" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">
+                    <span className="text-muted-foreground">None</span>
+                  </SelectItem>
+                  {kinds.map((k) => (
+                    <SelectItem key={k} value={k}>
+                      <span className="capitalize">{k}</span>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="project-role">Role</Label>
+              <Input
+                id="project-role"
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+                placeholder="creator, lead, contributor..."
+                disabled={isLoading}
+              />
+            </div>
+          </div>
+
           <div className="space-y-1.5">
             <Label htmlFor="project-tech">Tech (comma-separated)</Label>
             <Input
@@ -280,6 +354,17 @@ export function ProjectFormDialog({ project, trigger }: ProjectFormDialogProps) 
               value={techInput}
               onChange={(e) => setTechInput(e.target.value)}
               placeholder="React, TypeScript, Tailwind CSS"
+              disabled={isLoading}
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="project-highlights">Highlights (comma-separated)</Label>
+            <Input
+              id="project-highlights"
+              value={highlightsInput}
+              onChange={(e) => setHighlightsInput(e.target.value)}
+              placeholder="10k users, Featured on PH, Open sourced..."
               disabled={isLoading}
             />
           </div>

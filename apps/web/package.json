@@ -10,6 +10,7 @@
   "dependencies": {
     "@content-collections/mdx": "^0.2.2",
     "@packages/base": "workspace:*",
+    "@packages/calendar": "workspace:*",
     "@packages/cms": "workspace:*",
     "@packages/db": "workspace:*",
     "@packages/seo": "workspace:*",

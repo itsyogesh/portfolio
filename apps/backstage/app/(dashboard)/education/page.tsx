@@ -94,6 +94,9 @@ export default async function EducationPage() {
                     startDate: edu.startDate?.toISOString() ?? null,
                     endDate: edu.endDate?.toISOString() ?? null,
                     logoUrl: edu.logoUrl,
+                    url: edu.url,
+                    gpa: edu.gpa,
+                    courses: edu.courses,
                     position: edu.position,
                   }}
                   trigger={

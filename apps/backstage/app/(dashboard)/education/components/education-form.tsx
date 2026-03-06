@@ -27,6 +27,9 @@ type Education = {
   startDate: string | null;
   endDate: string | null;
   logoUrl: string | null;
+  url: string | null;
+  gpa: string | null;
+  courses: string[];
   position: number;
 };
 
@@ -63,6 +66,11 @@ export function EducationForm({
     toDateInputValue(education?.endDate ?? null)
   );
   const [logoUrl, setLogoUrl] = useState(education?.logoUrl ?? '');
+  const [url, setUrl] = useState(education?.url ?? '');
+  const [gpa, setGpa] = useState(education?.gpa ?? '');
+  const [coursesInput, setCoursesInput] = useState(
+    education?.courses?.join(', ') ?? ''
+  );
 
   const resetForm = () => {
     if (!isEditing) {
@@ -73,6 +81,9 @@ export function EducationForm({
       setStartDate('');
       setEndDate('');
       setLogoUrl('');
+      setUrl('');
+      setGpa('');
+      setCoursesInput('');
     }
   };
 
@@ -81,6 +92,11 @@ export function EducationForm({
     setIsLoading(true);
 
     try {
+      const coursesArray = coursesInput
+        .split(',')
+        .map((c) => c.trim())
+        .filter(Boolean);
+
       const payload = {
         institution,
         degree,
@@ -89,6 +105,9 @@ export function EducationForm({
         startDate: startDate || null,
         endDate: endDate || null,
         logoUrl,
+        url,
+        gpa,
+        courses: coursesArray,
       };
 
       const res = isEditing
@@ -232,15 +251,50 @@ export function EducationForm({
             </div>
           </div>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="edu-logoUrl">Logo URL</Label>
-            <Input
-              id="edu-logoUrl"
-              value={logoUrl}
-              onChange={(e) => setLogoUrl(e.target.value)}
-              placeholder="https://..."
-              disabled={isLoading}
-            />
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="edu-logoUrl">Logo URL</Label>
+              <Input
+                id="edu-logoUrl"
+                value={logoUrl}
+                onChange={(e) => setLogoUrl(e.target.value)}
+                placeholder="https://..."
+                disabled={isLoading}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="edu-url">Institution URL</Label>
+              <Input
+                id="edu-url"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                placeholder="https://university.edu"
+                disabled={isLoading}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="edu-gpa">GPA / Score</Label>
+              <Input
+                id="edu-gpa"
+                value={gpa}
+                onChange={(e) => setGpa(e.target.value)}
+                placeholder="3.8 / 4.0"
+                disabled={isLoading}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="edu-courses">Courses (comma-separated)</Label>
+              <Input
+                id="edu-courses"
+                value={coursesInput}
+                onChange={(e) => setCoursesInput(e.target.value)}
+                placeholder="Data Structures, Algorithms..."
+                disabled={isLoading}
+              />
+            </div>
           </div>
 
           <DialogFooter>
