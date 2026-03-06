@@ -27,14 +27,23 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
+    const slug =
+      body.slug ||
+      body.name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-|-$/g, '');
+
     const organization = await database.organization.create({
       data: {
         name: body.name,
+        slug,
         description: body.description || null,
         logoUrl: body.logoUrl || null,
         website: body.website || null,
         location: body.location || null,
         type: body.type || 'company',
+        industry: body.industry || null,
       },
     });
 

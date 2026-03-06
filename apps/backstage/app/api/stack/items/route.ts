@@ -28,6 +28,8 @@ export async function POST(request: NextRequest) {
         description: body.description || null,
         logoUrl: body.logoUrl || null,
         url: body.url || null,
+        level: body.level || null,
+        keywords: body.keywords || [],
         position: (maxPosition._max.position ?? -1) + 1,
         categoryId: body.categoryId,
       },

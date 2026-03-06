@@ -9,6 +9,7 @@ export async function GET() {
 
   const projects = await database.project.findMany({
     orderBy: { position: 'asc' },
+    include: { organization: true },
   });
 
   return NextResponse.json(projects);
@@ -38,6 +39,10 @@ export async function POST(request: NextRequest) {
         position: body.position ?? 0,
         startDate: body.startDate ? new Date(body.startDate) : null,
         endDate: body.endDate ? new Date(body.endDate) : null,
+        kind: body.kind || null,
+        role: body.role || null,
+        highlights: body.highlights || [],
+        organizationId: body.organizationId || null,
       },
     });
 

@@ -31,6 +31,9 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
           endDate: body.endDate ? new Date(body.endDate) : null,
         }),
         ...(body.logoUrl !== undefined && { logoUrl: body.logoUrl || null }),
+        ...(body.url !== undefined && { url: body.url || null }),
+        ...(body.gpa !== undefined && { gpa: body.gpa || null }),
+        ...(body.courses !== undefined && { courses: body.courses }),
         ...(body.position !== undefined && { position: body.position }),
       },
     });
