@@ -24,6 +24,7 @@ type StackItemFormProps = {
     id: string;
     name: string;
     description: string | null;
+    iconSlug: string | null;
     logoUrl: string | null;
     url: string | null;
   };
@@ -34,6 +35,7 @@ export function StackItemForm({ categoryId, item }: StackItemFormProps) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState(item?.name ?? '');
   const [description, setDescription] = useState(item?.description ?? '');
+  const [iconSlug, setIconSlug] = useState(item?.iconSlug ?? '');
   const [logoUrl, setLogoUrl] = useState(item?.logoUrl ?? '');
   const [url, setUrl] = useState(item?.url ?? '');
   const [isLoading, setIsLoading] = useState(false);
@@ -44,6 +46,7 @@ export function StackItemForm({ categoryId, item }: StackItemFormProps) {
     if (value) {
       setName(item?.name ?? '');
       setDescription(item?.description ?? '');
+      setIconSlug(item?.iconSlug ?? '');
       setLogoUrl(item?.logoUrl ?? '');
       setUrl(item?.url ?? '');
     }
@@ -64,6 +67,7 @@ export function StackItemForm({ categoryId, item }: StackItemFormProps) {
       const payload: Record<string, string> = {
         name: name.trim(),
         description: description.trim(),
+        iconSlug: iconSlug.trim(),
         logoUrl: logoUrl.trim(),
         url: url.trim(),
       };
@@ -88,6 +92,7 @@ export function StackItemForm({ categoryId, item }: StackItemFormProps) {
       setOpen(false);
       setName('');
       setDescription('');
+      setIconSlug('');
       setLogoUrl('');
       setUrl('');
       router.refresh();
@@ -149,7 +154,30 @@ export function StackItemForm({ categoryId, item }: StackItemFormProps) {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="item-logo-url">Logo URL</Label>
+              <Label htmlFor="item-icon-slug">Icon Slug</Label>
+              <div className="flex items-center gap-2">
+                <Input
+                  id="item-icon-slug"
+                  value={iconSlug}
+                  onChange={(e) => setIconSlug(e.target.value)}
+                  placeholder="e.g. typescript, react, nextdotjs"
+                  disabled={isLoading}
+                  className="flex-1"
+                />
+                {iconSlug.trim() && (
+                  <img
+                    src={`https://cdn.simpleicons.org/${iconSlug.trim()}`}
+                    alt={iconSlug}
+                    className="h-6 w-6 shrink-0 dark:invert"
+                  />
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Find slugs at simpleicons.org
+              </p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="item-logo-url">Logo URL (fallback)</Label>
               <Input
                 id="item-logo-url"
                 value={logoUrl}

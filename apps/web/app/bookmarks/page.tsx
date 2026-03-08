@@ -110,7 +110,7 @@ export default async function BookmarksPage({ searchParams }: BookmarksPageProps
   return (
     <div className="mx-auto max-w-2xl px-6 pt-24 pb-20">
       <section className="mb-12">
-        <h1 className="font-display text-4xl sm:text-5xl tracking-tight mb-4">
+        <h1 className="font-display text-3xl tracking-tight mb-4">
           Bookmarks
         </h1>
         <p className="text-muted-foreground leading-relaxed mb-6">

@@ -31,6 +31,7 @@ const categoryLabel: Record<string, string> = {
 const ProjectsPage = async () => {
   const allProjects = await database.project.findMany({
     orderBy: { position: 'asc' },
+    include: { organization: { select: { name: true } } },
   });
 
   const grouped = statusOrder
@@ -43,7 +44,7 @@ const ProjectsPage = async () => {
   return (
     <div className="mx-auto max-w-3xl px-6 py-16 space-y-16">
       <section className="space-y-4">
-        <h1 className="text-3xl font-bold tracking-tight">Projects</h1>
+        <h1 className="font-display text-3xl tracking-tight">Projects</h1>
         <p className="text-muted-foreground">
           Things I've built, am building, or have thought about building.
         </p>
@@ -67,9 +68,19 @@ const ProjectsPage = async () => {
                       <h3 className="font-medium text-foreground group-hover:text-foreground/80">
                         {project.title}
                       </h3>
+                      {project.organization && (
+                        <span className="text-xs text-muted-foreground px-1.5 py-0.5 rounded bg-muted/80">
+                          {project.organization.name}
+                        </span>
+                      )}
                       {project.category && (
                         <span className="text-xs text-muted-foreground px-1.5 py-0.5 rounded bg-muted">
                           {categoryLabel[project.category] || project.category}
+                        </span>
+                      )}
+                      {project.kind && (
+                        <span className="text-xs text-muted-foreground px-1.5 py-0.5 rounded bg-muted capitalize">
+                          {project.kind}
                         </span>
                       )}
                     </div>

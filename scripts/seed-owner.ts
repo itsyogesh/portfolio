@@ -8,13 +8,13 @@ import 'dotenv/config';
  *   OWNER_EMAIL=your@email.com
  *   OWNER_PASSWORD=your-secure-password
  *   OWNER_NAME="Your Name"
- *   APP_URL=http://localhost:3000  (or production URL)
+ *   APP_URL=http://localhost:4001  (or production URL)
  */
 async function main() {
   const email = process.env.OWNER_EMAIL;
   const password = process.env.OWNER_PASSWORD;
   const name = process.env.OWNER_NAME || 'Admin';
-  const appUrl = process.env.APP_URL || 'http://localhost:3001';
+  const appUrl = process.env.APP_URL || 'http://localhost:4001';
 
   if (!email || !password) {
     console.error(

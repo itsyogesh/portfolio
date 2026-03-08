@@ -18,6 +18,7 @@ type StackItem = {
   id: string;
   name: string;
   description: string | null;
+  iconSlug: string | null;
   logoUrl: string | null;
   url: string | null;
   position: number;
@@ -108,11 +109,15 @@ export function StackCategoryCard({ category }: StackCategoryCardProps) {
             key={item.id}
             className="flex items-center gap-3 py-2 px-3 border border-border/40 rounded-md hover:bg-muted/30 transition-colors"
           >
-            {item.logoUrl && (
+            {(item.iconSlug || item.logoUrl) && (
               <img
-                src={item.logoUrl}
+                src={
+                  item.iconSlug
+                    ? `https://cdn.simpleicons.org/${item.iconSlug}`
+                    : item.logoUrl!
+                }
                 alt={item.name}
-                className="h-6 w-6 rounded object-contain shrink-0"
+                className={`h-6 w-6 rounded object-contain shrink-0${item.iconSlug ? ' dark:invert' : ''}`}
               />
             )}
             <div className="min-w-0 flex-1">

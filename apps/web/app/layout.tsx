@@ -2,6 +2,7 @@ import './styles.css';
 import { BaseProvider } from '@packages/base';
 import { fonts } from '@packages/base/lib/fonts';
 import { cn } from '@packages/base/lib/utils';
+import { JsonLd, type WithContext, type WebSite } from '@packages/seo/json-ld';
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { Footer } from './components/footer';
@@ -21,7 +22,7 @@ export async function generateMetadata(): Promise<Metadata> {
     metadataBase: new URL(
       process.env.VERCEL_PROJECT_PRODUCTION_URL
         ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-        : 'http://localhost:3000'
+        : 'http://localhost:4000'
     ),
   };
 }
@@ -29,6 +30,17 @@ export async function generateMetadata(): Promise<Metadata> {
 const RootLayout = async ({ children }: { children: ReactNode }) => {
   const profile = await getProfile();
   const profileName = profile?.name || 'Yogesh Kumar';
+  const siteUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : 'http://localhost:4000';
+
+  const webSiteJsonLd: WithContext<WebSite> = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: profileName,
+    url: siteUrl,
+    description: profile?.headline ?? undefined,
+  };
 
   return (
     <html
@@ -37,6 +49,7 @@ const RootLayout = async ({ children }: { children: ReactNode }) => {
       suppressHydrationWarning
     >
       <body className="min-h-screen flex flex-col" suppressHydrationWarning>
+        <JsonLd code={webSiteJsonLd} />
         <BaseProvider
           attribute="class"
           defaultTheme="dark"

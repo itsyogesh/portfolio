@@ -20,10 +20,15 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         ...(body.description !== undefined && {
           description: body.description || null,
         }),
+        ...(body.iconSlug !== undefined && {
+          iconSlug: body.iconSlug || null,
+        }),
         ...(body.logoUrl !== undefined && {
           logoUrl: body.logoUrl || null,
         }),
         ...(body.url !== undefined && { url: body.url || null }),
+        ...(body.level !== undefined && { level: body.level || null }),
+        ...(body.keywords !== undefined && { keywords: body.keywords }),
         ...(body.position !== undefined && { position: body.position }),
         ...(body.categoryId !== undefined && {
           categoryId: body.categoryId,

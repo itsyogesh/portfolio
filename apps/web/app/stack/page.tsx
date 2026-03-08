@@ -16,7 +16,7 @@ const StackPage = async () => {
   return (
     <div className="mx-auto max-w-3xl px-6 py-16 space-y-16">
       <section className="space-y-4">
-        <h1 className="text-3xl font-bold tracking-tight">Stack</h1>
+        <h1 className="font-display text-3xl tracking-tight">Stack</h1>
         <p className="text-muted-foreground">
           Tools, languages, and infrastructure I use to build things.
         </p>
@@ -31,9 +31,20 @@ const StackPage = async () => {
             {category.items.map((item) => (
               <div
                 key={item.id}
-                className="flex items-start gap-3 rounded-lg border border-border/50 p-3"
+                className="flex items-center gap-3 rounded-lg border border-border/50 p-3"
               >
-                <div>
+                {(item.iconSlug || item.logoUrl) && (
+                  <img
+                    src={
+                      item.iconSlug
+                        ? `https://cdn.simpleicons.org/${item.iconSlug}`
+                        : item.logoUrl!
+                    }
+                    alt={item.name}
+                    className={`h-5 w-5 shrink-0 object-contain${item.iconSlug ? ' dark:invert' : ''}`}
+                  />
+                )}
+                <div className="min-w-0">
                   <p className="text-sm font-medium">{item.name}</p>
                   {item.description && (
                     <p className="text-xs text-muted-foreground">

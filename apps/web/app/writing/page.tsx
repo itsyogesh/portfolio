@@ -62,7 +62,7 @@ const WritingPage = async () => {
   return (
     <div className="mx-auto max-w-3xl px-6 py-16 space-y-16">
       <section className="space-y-4">
-        <h1 className="text-3xl font-bold tracking-tight">Writing</h1>
+        <h1 className="font-display text-3xl tracking-tight">Writing</h1>
         <p className="text-muted-foreground">
           Thoughts on building products, design, AI tools, and the Web3 ecosystem.
         </p>

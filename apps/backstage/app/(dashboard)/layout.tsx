@@ -7,6 +7,7 @@ import { Separator } from '@packages/base/components/ui/separator';
 import type { ReactNode } from 'react';
 import { cookies } from 'next/headers';
 import { AppSidebar } from '../components/app-sidebar';
+import { HeaderBreadcrumb } from '../components/header-breadcrumb';
 import { getSession } from '../api/_lib/auth';
 
 const DashboardLayout = async ({ children }: { children: ReactNode }) => {
@@ -21,7 +22,7 @@ const DashboardLayout = async ({ children }: { children: ReactNode }) => {
         <header className="flex h-12 shrink-0 items-center gap-2 border-b border-border/40 px-4">
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="mr-2 !h-4" />
-          <span className="text-xs text-muted-foreground">itsyogesh.fyi</span>
+          <HeaderBreadcrumb />
         </header>
         <main className="flex-1 p-6">{children}</main>
       </SidebarInset>

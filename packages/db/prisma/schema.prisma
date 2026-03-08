@@ -128,6 +128,8 @@ model Profile {
   location  String?
   website   String?
   resumeUrl String?
+  email     String?
+  phone     String?
 
   socials SocialLink[]
 
@@ -155,13 +157,16 @@ model SocialLink {
 model Organization {
   id          String  @id @default(cuid())
   name        String
+  slug        String  @unique
   description String?
   logoUrl     String?
   website     String?
   location    String?
   type        String  @default("company") // company, nonprofit, community, freelance
+  industry    String?
 
   workExperiences WorkExperience[]
+  projects        Project[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -176,6 +181,7 @@ model WorkExperience {
   startDate   DateTime
   endDate     DateTime?
   type        String    @default("fulltime") // fulltime, contract, freelance, founder
+  highlights  String[]
   position    Int       @default(0)
 
   organizationId String
@@ -205,6 +211,12 @@ model Project {
   position  Int       @default(0)
   startDate DateTime?
   endDate   DateTime?
+  kind      String?   // product, client, oss, internal, experiment
+  role      String?   // creator, lead, contributor, maintainer
+  highlights String[]
+
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -223,6 +235,9 @@ model Education {
   startDate   DateTime?
   endDate     DateTime?
   logoUrl     String?
+  url         String?
+  gpa         String?
+  courses     String[]
   position    Int       @default(0)
 
   createdAt DateTime @default(now())
@@ -266,12 +281,15 @@ model StackCategory {
 }
 
 model StackItem {
-  id          String  @id @default(cuid())
+  id          String   @id @default(cuid())
   name        String
   description String?
-  logoUrl     String?
+  iconSlug    String?  // Simple Icons slug, e.g. "typescript", "nextdotjs"
+  logoUrl     String?  // Fallback for icons not in Simple Icons
   url         String?
-  position    Int     @default(0)
+  level       String?  // beginner, intermediate, advanced, expert
+  keywords    String[]
+  position    Int      @default(0)
 
   categoryId String
   category   StackCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
@@ -281,6 +299,20 @@ model StackItem {
 
   @@unique([categoryId, name])
   @@map("stack_item")
+}
+
+// ─── Portfolio: Languages ────────────────────────────────────────────
+
+model Language {
+  id       String  @id @default(cuid())
+  name     String  @unique
+  fluency  String? // native, fluent, professional, elementary
+  position Int     @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("language")
 }
 
 // ─── Portfolio: Timeline ─────────────────────────────────────────────
@@ -359,4 +391,147 @@ model StarRepo {
   updatedAt DateTime @updatedAt
 
   @@map("star_repo")
+}
+
+// ─── Calendar & Scheduling ────────────────────────────────────────
+
+model GoogleAccount {
+  id                    String    @id @default(cuid())
+  googleEmail           String
+  googleAccountId       String    @unique
+  displayName           String?
+  encryptedAccessToken  String
+  encryptedRefreshToken String
+  accessTokenExpiresAt  DateTime
+  scope                 String
+  status                String    @default("active")
+  color                 String    @default("#4285f4")
+
+  calendars    GoogleCalendar[]
+  cachedEvents CalendarEventCache[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("google_account")
+}
+
+model GoogleCalendar {
+  id               String   @id @default(cuid())
+  googleCalendarId String
+  summary          String
+  color            String?
+  isVisible        Boolean  @default(true)
+  isPrimary        Boolean  @default(false)
+  accessRole       String   @default("reader")
+
+  syncToken    String?
+  lastSyncedAt DateTime?
+
+  googleAccountId String
+  googleAccount   GoogleAccount @relation(fields: [googleAccountId], references: [id], onDelete: Cascade)
+
+  cachedEvents        CalendarEventCache[]
+  eventTypeCheckLinks EventTypeCheckCalendar[]
+  targetEventTypes    EventType[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([googleAccountId, googleCalendarId])
+  @@map("google_calendar")
+}
+
+model CalendarEventCache {
+  id            String   @id @default(cuid())
+  googleEventId String
+  summary       String?
+  description   String?
+  location      String?
+  startTime     DateTime
+  endTime       DateTime
+  isAllDay      Boolean  @default(false)
+  status        String   @default("confirmed")
+  htmlLink      String?
+
+  calendarId      String
+  calendar        GoogleCalendar @relation(fields: [calendarId], references: [id], onDelete: Cascade)
+  googleAccountId String
+  googleAccount   GoogleAccount  @relation(fields: [googleAccountId], references: [id], onDelete: Cascade)
+
+  syncedAt DateTime @default(now())
+
+  @@unique([calendarId, googleEventId])
+  @@index([startTime])
+  @@index([endTime])
+  @@index([calendarId])
+  @@map("calendar_event_cache")
+}
+
+model EventType {
+  id              String  @id @default(cuid())
+  slug            String  @unique
+  title           String
+  description     String?
+  durationMinutes Int
+  color           String?
+  isActive        Boolean @default(true)
+  bufferBefore    Int     @default(0)
+  bufferAfter     Int     @default(0)
+  minNotice       Int     @default(60)
+  maxFutureDays   Int     @default(60)
+  availability    Json
+  timezone        String  @default("Asia/Kolkata")
+
+  targetCalendarId String?
+  targetCalendar   GoogleCalendar? @relation(fields: [targetCalendarId], references: [id], onDelete: SetNull)
+
+  checkCalendars EventTypeCheckCalendar[]
+  bookings       Booking[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("event_type")
+}
+
+model EventTypeCheckCalendar {
+  id String @id @default(cuid())
+
+  eventTypeId String
+  eventType   EventType @relation(fields: [eventTypeId], references: [id], onDelete: Cascade)
+
+  calendarId String
+  calendar   GoogleCalendar @relation(fields: [calendarId], references: [id], onDelete: Cascade)
+
+  @@unique([eventTypeId, calendarId])
+  @@map("event_type_check_calendar")
+}
+
+model Booking {
+  id             String    @id @default(cuid())
+  idempotencyKey String?   @unique
+
+  eventTypeId String
+  eventType   EventType @relation(fields: [eventTypeId], references: [id])
+
+  bookerName       String
+  bookerEmail      String
+  bookerTimezone   String
+  startTime        DateTime
+  endTime          DateTime
+  status           String   @default("confirmed")
+  googleEventId    String?
+  notes            String?
+  cancelledAt      DateTime?
+  cancelReason     String?
+  targetCalendarId String?  // denormalized from EventType for exclusion constraint
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([eventTypeId])
+  @@index([startTime])
+  @@index([bookerEmail])
+  @@map("booking")
 }

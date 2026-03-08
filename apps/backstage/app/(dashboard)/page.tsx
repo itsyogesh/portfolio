@@ -5,6 +5,7 @@ import Link from 'next/link';
 import {
   Bookmark,
   Briefcase,
+  CalendarDays,
   FolderKanban,
   GraduationCap,
   Layers,
@@ -38,6 +39,8 @@ export default async function DashboardPage() {
     starListCount,
     bookmarkCount,
     externalWritingCount,
+    calendarAccountCount,
+    calendarEventCount,
   ] = await Promise.all([
     database.profile.findFirst(),
     database.project.count(),
@@ -51,6 +54,8 @@ export default async function DashboardPage() {
     database.starList.count(),
     database.bookmark.count(),
     database.externalWriting.count(),
+    database.googleAccount.count(),
+    database.calendarEventCache.count(),
   ]);
 
   const stats = [
@@ -119,6 +124,12 @@ export default async function DashboardPage() {
       value: externalWritingCount,
       href: '/writing',
       icon: PenTool,
+    },
+    {
+      label: 'Calendar',
+      value: `${calendarAccountCount} accounts, ${calendarEventCount} events`,
+      href: '/calendar',
+      icon: CalendarDays,
     },
   ];
 
