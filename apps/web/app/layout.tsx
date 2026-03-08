@@ -22,7 +22,7 @@ export async function generateMetadata(): Promise<Metadata> {
     metadataBase: new URL(
       process.env.VERCEL_PROJECT_PRODUCTION_URL
         ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-        : 'http://localhost:3000'
+        : 'http://localhost:4000'
     ),
   };
 }
@@ -32,7 +32,7 @@ const RootLayout = async ({ children }: { children: ReactNode }) => {
   const profileName = profile?.name || 'Yogesh Kumar';
   const siteUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL
     ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-    : 'http://localhost:3000';
+    : 'http://localhost:4000';
 
   const webSiteJsonLd: WithContext<WebSite> = {
     '@context': 'https://schema.org',

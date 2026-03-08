@@ -20,6 +20,9 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         ...(body.description !== undefined && {
           description: body.description || null,
         }),
+        ...(body.iconSlug !== undefined && {
+          iconSlug: body.iconSlug || null,
+        }),
         ...(body.logoUrl !== undefined && {
           logoUrl: body.logoUrl || null,
         }),

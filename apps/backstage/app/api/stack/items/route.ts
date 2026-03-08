@@ -26,6 +26,7 @@ export async function POST(request: NextRequest) {
       data: {
         name: body.name,
         description: body.description || null,
+        iconSlug: body.iconSlug || null,
         logoUrl: body.logoUrl || null,
         url: body.url || null,
         level: body.level || null,

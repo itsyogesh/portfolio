@@ -10,15 +10,15 @@ const authOptions = {
     process.env.BETTER_AUTH_URL ||
     (process.env.VERCEL_PROJECT_PRODUCTION_URL
       ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-      : 'http://localhost:3001'),
+      : 'http://localhost:4001'),
 
   database: prismaAdapter(database, {
     provider: 'postgresql',
   }),
 
   trustedOrigins: [
-    'http://localhost:3000',
-    'http://localhost:3001',
+    'http://localhost:4000',
+    'http://localhost:4001',
     ...(process.env.NODE_ENV === 'production'
       ? ['https://itsyogesh.fyi', 'https://backstage.itsyogesh.fyi']
       : []),

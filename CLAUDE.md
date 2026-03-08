@@ -12,6 +12,7 @@ Personal portfolio monorepo for itsyogesh.fyi. Two Next.js 16 apps (public site 
 - `packages/seo/` — Metadata helper and JSON-LD component
 - `packages/base/` — shadcn/ui components, theme, fonts, utilities
 - `packages/ai/` — OpenAI integration for bookmark processing
+- `packages/calendar/` — Shared Google Calendar service (OAuth, API, availability, encryption)
 - `content/` — MDX articles and projects, stack.json, timeline.json
 - `scripts/` — Seed, sync, and bookmark processing CLI scripts
 - `tooling/` — Shared TypeScript and Next.js configs
@@ -38,6 +39,10 @@ Personal portfolio monorepo for itsyogesh.fyi. Two Next.js 16 apps (public site 
 - `requireAdminPage()` guards server components (redirects to /sign-in)
 - Singleton Profile pattern: `id @default("owner")`, upsert by fixed ID
 - Stars use soft-cleanup (isStarred + unstarredAt) to preserve list assignments
+- Calendar & Scheduling: packages/calendar is shared between backstage (CRUD, account mgmt) and web (availability, booking)
+- Google OAuth tokens are encrypted at rest (AES-256-GCM) via CALENDAR_ENCRYPTION_KEY
+- Double-booking prevention uses PostgreSQL exclusion constraint + two-phase booking
+- Public scheduling pages at /schedule/[slug] — no auth required
 
 # Gotchas
 
@@ -54,3 +59,6 @@ See `.env.example` files in root, `apps/web/`, and `apps/backstage/` for require
 - `DATABASE_URL` / `DIRECT_URL` — Neon PostgreSQL connection strings
 - `BETTER_AUTH_SECRET` — Auth session signing
 - `OWNER_EMAIL` — Backstage access control (backstage only)
+- `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` — Google OAuth for calendar (backstage)
+- `GOOGLE_REDIRECT_URI` — OAuth callback URL (backstage)
+- `CALENDAR_ENCRYPTION_KEY` — 32-byte hex for token encryption (backstage + web)

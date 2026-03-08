@@ -284,7 +284,8 @@ model StackItem {
   id          String   @id @default(cuid())
   name        String
   description String?
-  logoUrl     String?
+  iconSlug    String?  // Simple Icons slug, e.g. "typescript", "nextdotjs"
+  logoUrl     String?  // Fallback for icons not in Simple Icons
   url         String?
   level       String?  // beginner, intermediate, advanced, expert
   keywords    String[]

@@ -91,7 +91,7 @@ export function EventTypeList({
   };
 
   const copyLink = (slug: string) => {
-    navigator.clipboard.writeText(`${window.location.origin.replace(':3001', ':3000')}/schedule/${slug}`);
+    navigator.clipboard.writeText(`${window.location.origin.replace(':4001', ':4000')}/schedule/${slug}`);
   };
 
   return (

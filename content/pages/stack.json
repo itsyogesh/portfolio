@@ -3,53 +3,53 @@
     {
       "name": "Development",
       "items": [
-        { "name": "TypeScript", "description": "Primary language for everything" },
-        { "name": "Next.js", "description": "React framework for web apps" },
-        { "name": "React Native", "description": "Cross-platform mobile development" },
-        { "name": "Node.js", "description": "Server-side runtime" },
-        { "name": "Python/Django", "description": "Backend for Chargespot" },
-        { "name": "Go", "description": "OCPP/OCPI protocol servers" },
-        { "name": "Flutter/Dart", "description": "Mobile apps" },
-        { "name": "Prisma", "description": "Database ORM" },
-        { "name": "PostgreSQL", "description": "Primary database" },
-        { "name": "Tauri", "description": "Desktop apps with Rust" }
+        { "name": "TypeScript", "description": "Primary language for everything", "iconSlug": "typescript" },
+        { "name": "Next.js", "description": "React framework for web apps", "iconSlug": "nextdotjs" },
+        { "name": "React Native", "description": "Cross-platform mobile development", "iconSlug": "react" },
+        { "name": "Node.js", "description": "Server-side runtime", "iconSlug": "nodedotjs" },
+        { "name": "Python/Django", "description": "Backend for Chargespot", "iconSlug": "django" },
+        { "name": "Go", "description": "OCPP/OCPI protocol servers", "iconSlug": "go" },
+        { "name": "Flutter/Dart", "description": "Mobile apps", "iconSlug": "flutter" },
+        { "name": "Prisma", "description": "Database ORM", "iconSlug": "prisma" },
+        { "name": "PostgreSQL", "description": "Primary database", "iconSlug": "postgresql" },
+        { "name": "Tauri", "description": "Desktop apps with Rust", "iconSlug": "tauri" }
       ]
     },
     {
       "name": "AI & Tools",
       "items": [
-        { "name": "Claude Code", "description": "Primary AI coding agent" },
-        { "name": "Cursor", "description": "AI-powered editor" },
+        { "name": "Claude Code", "description": "Primary AI coding agent", "iconSlug": "anthropic" },
+        { "name": "Cursor", "description": "AI-powered editor", "iconSlug": "cursor" },
         { "name": "Paper", "description": "HTML-native design tool with MCP" },
-        { "name": "v0", "description": "UI generation" }
+        { "name": "v0", "description": "UI generation", "iconSlug": "vercel" }
       ]
     },
     {
       "name": "Infrastructure",
       "items": [
-        { "name": "Vercel", "description": "Deployment platform" },
+        { "name": "Vercel", "description": "Deployment platform", "iconSlug": "vercel" },
         { "name": "AWS", "description": "Cloud infrastructure for Chargespot" },
-        { "name": "Terraform", "description": "Infrastructure as code" },
-        { "name": "Firebase", "description": "Backend services" },
-        { "name": "GitHub", "description": "Version control and CI/CD" }
+        { "name": "Terraform", "description": "Infrastructure as code", "iconSlug": "terraform" },
+        { "name": "Firebase", "description": "Backend services", "iconSlug": "firebase" },
+        { "name": "GitHub", "description": "Version control and CI/CD", "iconSlug": "github" }
       ]
     },
     {
       "name": "Web3",
       "items": [
-        { "name": "Polkadot/Substrate", "description": "Blockchain framework" },
+        { "name": "Polkadot/Substrate", "description": "Blockchain framework", "iconSlug": "polkadot" },
         { "name": "Dedot", "description": "Modern Substrate interaction library" },
-        { "name": "RainbowKit/Wagmi", "description": "Ethereum wallet integration" },
-        { "name": "Bitcoin Development Kit", "description": "BDK for Coinbox" }
+        { "name": "RainbowKit/Wagmi", "description": "Ethereum wallet integration", "iconSlug": "ethereum" },
+        { "name": "Bitcoin Development Kit", "description": "BDK for Coinbox", "iconSlug": "bitcoin" }
       ]
     },
     {
       "name": "Design",
       "items": [
-        { "name": "Tailwind CSS", "description": "Utility-first CSS" },
-        { "name": "shadcn/ui", "description": "Component library" },
-        { "name": "Figma", "description": "Design tool" },
-        { "name": "Radix UI", "description": "Accessible primitives" }
+        { "name": "Tailwind CSS", "description": "Utility-first CSS", "iconSlug": "tailwindcss" },
+        { "name": "shadcn/ui", "description": "Component library", "iconSlug": "shadcnui" },
+        { "name": "Figma", "description": "Design tool", "iconSlug": "figma" },
+        { "name": "Radix UI", "description": "Accessible primitives", "iconSlug": "radixui" }
       ]
     }
   ]

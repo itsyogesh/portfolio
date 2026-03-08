@@ -202,13 +202,23 @@ export function OrgForm({
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <Label htmlFor="org-logoUrl">Logo URL</Label>
-              <Input
-                id="org-logoUrl"
-                value={logoUrl}
-                onChange={(e) => setLogoUrl(e.target.value)}
-                placeholder="https://..."
-                disabled={isLoading}
-              />
+              <div className="flex items-center gap-2">
+                <Input
+                  id="org-logoUrl"
+                  value={logoUrl}
+                  onChange={(e) => setLogoUrl(e.target.value)}
+                  placeholder="https://..."
+                  disabled={isLoading}
+                  className="flex-1"
+                />
+                {logoUrl.trim() && (
+                  <img
+                    src={logoUrl.trim()}
+                    alt="Logo preview"
+                    className="h-8 w-8 shrink-0 rounded object-contain border border-border/50"
+                  />
+                )}
+              </div>
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="org-website">Website</Label>

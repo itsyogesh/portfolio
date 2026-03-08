@@ -1,3 +1,4 @@
+import { Timeline } from '@packages/base/components/ui/timeline';
 import { database } from '@packages/db';
 import { JsonLd, type WithContext, type ProfilePage } from '@packages/seo/json-ld';
 import { createMetadata } from '@packages/seo/metadata';
@@ -66,7 +67,7 @@ const AboutPage = async () => {
     <div className="mx-auto max-w-3xl px-6 py-16 space-y-16">
       <JsonLd code={jsonLd} />
       <section className="space-y-6">
-        <h1 className="text-3xl font-bold tracking-tight">About</h1>
+        <h1 className="font-display text-3xl tracking-tight">About</h1>
         {profile?.bio ? (
           <div className="prose prose-neutral dark:prose-invert max-w-none">
             <Markdown>{profile.bio}</Markdown>
@@ -91,26 +92,16 @@ const AboutPage = async () => {
         <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
           Timeline
         </h2>
-        <div className="space-y-0">
-          {timeline.map((item) => (
-            <div
-              key={item.id}
-              className="flex gap-6 py-4 border-b border-border/50 last:border-0"
-            >
-              <span className="text-sm text-muted-foreground w-12 shrink-0 pt-0.5">
-                {item.year}
-              </span>
-              <div className="space-y-1">
-                <h3 className="font-medium text-sm">{item.title}</h3>
-                {item.description && (
-                  <p className="text-sm text-muted-foreground">
-                    {item.description}
-                  </p>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
+        <Timeline
+          data={timeline.map((item) => ({
+            title: `${item.year} — ${item.title}`,
+            content: item.description ? (
+              <p className="text-sm text-muted-foreground">
+                {item.description}
+              </p>
+            ) : null,
+          }))}
+        />
       </section>
     </div>
   );

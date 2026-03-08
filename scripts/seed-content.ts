@@ -195,11 +195,13 @@ async function seedStack() {
         },
         update: {
           description: item.description,
+          iconSlug: item.iconSlug || null,
           position: ii,
         },
         create: {
           name: item.name,
           description: item.description,
+          iconSlug: item.iconSlug || null,
           position: ii,
           categoryId: category.id,
         },
