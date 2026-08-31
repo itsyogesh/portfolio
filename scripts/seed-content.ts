@@ -64,7 +64,7 @@ What I'm optimising for now: fewer, better products. Public work over private dr
     where: { id: 'owner' },
     update: {
       name: 'Yogesh Kumar',
-      headline: 'Founder of Droidsize and Chargespot. Building useful software from Delhi since 2013.',
+      headline: 'I make digital things. Building Droidsize for a better internet and Chargespot for a better world — from Delhi, since 2013.',
       bio,
       website: 'https://itsyogesh.fyi',
       avatarUrl: '/avatar.jpg',
@@ -72,7 +72,7 @@ What I'm optimising for now: fewer, better products. Public work over private dr
     create: {
       id: 'owner',
       name: 'Yogesh Kumar',
-      headline: 'Founder of Droidsize and Chargespot. Building useful software from Delhi since 2013.',
+      headline: 'I make digital things. Building Droidsize for a better internet and Chargespot for a better world — from Delhi, since 2013.',
       bio,
       website: 'https://itsyogesh.fyi',
       avatarUrl: '/avatar.jpg',

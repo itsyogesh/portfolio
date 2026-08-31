@@ -100,6 +100,24 @@
       "logoUrl": "/logos/pei.png"
     },
     {
+      "slug": "independent",
+      "name": "Independent",
+      "type": "practice",
+      "industry": "Contract engineering",
+      "description": "Solo contract practice across Web3 and mobile.",
+      "experience": {
+        "title": "Contract Engineer",
+        "type": "contract",
+        "startDate": "2016-08-01",
+        "endDate": "2019-01-01",
+        "highlights": [
+          "Client work across Web3 and mobile: Busy.org's Steem commenting system, a Komodo wallet on Zcash's zero-knowledge stack, Ryze's card-trading apps, and Alphasheets",
+          "Later placements through Turtle and G2i — AiFi, Millions, and more"
+        ],
+        "position": 5
+      }
+    },
+    {
       "slug": "paytm",
       "name": "Paytm",
       "type": "company",
@@ -114,7 +132,7 @@
           "Seller dashboard backend for the e-commerce marketplace",
           "Growth engineering: multi-platform deep-linking service and price-comparison engine"
         ],
-        "position": 5
+        "position": 6
       },
       "logoUrl": "/logos/paytm.png"
     },
@@ -132,7 +150,7 @@
         "highlights": [
           "First engineering job — backend APIs and the first Android app"
         ],
-        "position": 6
+        "position": 7
       },
       "logoUrl": "/logos/squadrun.png"
     }

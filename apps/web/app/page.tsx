@@ -5,14 +5,6 @@ import { ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
 import { getProfile } from './lib/profile';
 
-const statusColors: Record<string, string> = {
-  active: 'bg-emerald-500/15 text-emerald-400',
-  building: 'bg-amber-500/15 text-amber-400',
-  shipped: 'bg-sky-500/15 text-sky-400',
-  legacy: 'bg-zinc-500/15 text-zinc-500',
-  concept: 'bg-violet-500/15 text-violet-400',
-};
-
 const HomePage = async () => {
   const [profile, featuredProjects] = await Promise.all([
     getProfile(),
@@ -85,16 +77,9 @@ const HomePage = async () => {
                     </span>
                   )}
                 <div className="min-w-0 space-y-1">
-                  <div className="flex items-center gap-4 min-w-0">
-                    <h3 className="font-medium text-foreground truncate">
-                      {project.title}
-                    </h3>
-                    <span
-                      className={`text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full shrink-0 ${statusColors[project.status] ?? 'bg-zinc-500/15 text-zinc-500'}`}
-                    >
-                      {project.status}
-                    </span>
-                  </div>
+                  <h3 className="font-medium text-foreground truncate">
+                    {project.title}
+                  </h3>
                   {project.summary ? (
                     <p className="text-sm text-muted-foreground line-clamp-1">
                       {project.summary}
@@ -140,16 +125,9 @@ const HomePage = async () => {
                     </span>
                   )}
                 <div className="min-w-0 space-y-1">
-                  <div className="flex items-center gap-4 min-w-0">
-                    <h3 className="font-medium text-foreground truncate">
-                      {project.title}
-                    </h3>
-                    <span
-                      className={`text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full shrink-0 ${statusColors[project.status] ?? 'bg-zinc-500/15 text-zinc-500'}`}
-                    >
-                      {project.status}
-                    </span>
-                  </div>
+                  <h3 className="font-medium text-foreground truncate">
+                    {project.title}
+                  </h3>
                   {project.summary ? (
                     <p className="text-sm text-muted-foreground line-clamp-1">
                       {project.summary}
