@@ -42,6 +42,7 @@ export default async function Image() {
           justifyContent: 'center',
           background: '#0a0a0a',
           padding: '0 96px',
+          position: 'relative',
           fontFamily: 'Inter',
         }}
       >
@@ -81,15 +82,23 @@ export default async function Image() {
         >
           {headline}
         </span>
-        <span
+        <div
           style={{
-            fontSize: 18,
-            color: '#78716c',
-            marginTop: 28,
+            position: 'absolute',
+            right: 64,
+            bottom: 56,
+            display: 'flex',
+            alignItems: 'center',
+            padding: '12px 24px',
+            borderRadius: 999,
+            border: '1px solid rgba(237,237,237,0.14)',
+            background: 'rgba(255,255,255,0.04)',
+            fontSize: 19,
+            color: '#a8a29e',
           }}
         >
           {website}
-        </span>
+        </div>
       </div>
     ),
     {
