@@ -1,57 +1,57 @@
 [
   {
     "year": "2013",
-    "title": "Started building for a living",
-    "description": "First engineering job at SquadRun out of the 91springboard coworking space. Founded Unstudious, an EdTech venture that drew attention from Matrix Partners and Tracxn."
+    "title": "SquadRun · Unstudious",
+    "description": "Founding engineer at SquadRun — built the first backend APIs and Android app. Founded Unstudious, an EdTech startup covered by Tracxn and approached by Matrix Partners."
   },
   {
     "year": "2014",
     "title": "Paytm",
-    "description": "Software engineer on the seller platform during India's fintech surge, then promoted to growth engineering — deep-linking and price comparison at scale."
+    "description": "Joined the seller platform team during the marketplace build-out. Promoted to growth engineering: the deep-linking service and price-comparison engine."
   },
   {
     "year": "2016",
-    "title": "Went independent",
-    "description": "Left Paytm to contract across React, React Native, and early blockchain work for teams in the US and Europe."
+    "title": "Independent",
+    "description": "Left Paytm to work directly with product teams in the US and Europe across React, React Native, and early blockchain systems."
   },
   {
     "year": "2018",
-    "title": "Pei and Bitcharge v1",
-    "description": "Began a four-year run building a US consumer fintech at Pei. On the side, launched Bitcharge — 195 people used it to accept crypto payments."
+    "title": "Pei · Bitcharge",
+    "description": "Started four years as the engineer behind Pei's consumer fintech apps. Shipped Bitcharge v1; 195 businesses used it to accept crypto payments."
   },
   {
     "year": "2019",
-    "title": "Founded Droidsize",
-    "description": "Registered Droidsize Technologies with Neeraj Kumar — the product studio where most of my work now lives."
+    "title": "Droidsize Technologies",
+    "description": "Incorporated the product studio with Neeraj Kumar."
   },
   {
     "year": "2021",
-    "title": "Entered the Polkadot ecosystem",
-    "description": "First Kusama treasury grants and the beginning of a long arc in Web3 developer tooling."
+    "title": "Polkadot",
+    "description": "First Kusama treasury grants. The start of sustained work on developer tooling for the ecosystem."
   },
   {
     "year": "2022",
-    "title": "Flex, then the fork in the road",
-    "description": "Joined Flex after Pei's acquihire. When the role ended, chose building companies over returning to employment."
+    "title": "Flex",
+    "description": "Moved with Pei's team through the acquisition. Left at the end of the year to build companies full-time."
   },
   {
     "year": "2023",
-    "title": "Founded Charge23 Labs",
-    "description": "Incorporated with my wife Evisha to build Chargespot — EV charging for India. DPIIT-recognised, incubated at AIC Sangam."
+    "title": "Charge23 Labs",
+    "description": "Incorporated with Evisha Soni to build Chargespot. DPIIT-recognised, incubated at AIC Sangam."
   },
   {
     "year": "2024",
     "title": "Web3 Foundation grant",
-    "description": "Relaycode's W3F grant application merged — the redemption arc for earlier unfinished treasury work."
+    "description": "Relaycode accepted into the W3F grants program."
   },
   {
     "year": "2025",
-    "title": "The AI-agents shift",
-    "description": "Rebuilt my entire workflow around AI agents. Output changed step-function: Domain Collective shipped, Merry Magic Mail launched on Product Hunt."
+    "title": "AI-native development",
+    "description": "Rebuilt the entire workflow around AI agents. Domain Collective launched; Merry Magic Mail shipped on Product Hunt."
   },
   {
     "year": "2026",
-    "title": "Coming out of hiding",
-    "description": "Relaycode Milestone 2 delivered. Droidsize relaunched with a site worthy of its products. This portfolio rebuilt to tell the story properly."
+    "title": "Relaycode M2 · Droidsize relaunch",
+    "description": "Delivered Relaycode's second grant milestone. Relaunched droidsize.com and rebuilt this site."
   }
 ]

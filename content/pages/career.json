@@ -57,7 +57,9 @@
           "React Native and backend across the lending product"
         ],
         "position": 2
-      }
+      },
+      "logoUrl": "/logos/stream.png",
+      "website": "https://apps.apple.com/us/app/get-paid-early-cash-advance/id6446709359"
     },
     {
       "slug": "flex",
@@ -94,7 +96,8 @@
           "Team acquihired by Flex in late 2021"
         ],
         "position": 4
-      }
+      },
+      "logoUrl": "/logos/pei.png"
     },
     {
       "slug": "paytm",
