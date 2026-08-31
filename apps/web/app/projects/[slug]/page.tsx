@@ -46,14 +46,26 @@ const GitHubMark = () => (
 
 const ProjectPage = async ({ params }: Props) => {
   const { slug } = await params;
-  const [project, profile] = await Promise.all([
+  const [project, profile, stackItems] = await Promise.all([
     database.project.findUnique({
       where: { slug },
       include: { organization: true },
     }),
     getProfile(),
+    database.stackItem.findMany({
+      select: { name: true, iconSlug: true, logoUrl: true },
+    }),
   ]);
   if (!project) notFound();
+
+  const products =
+    (project.products as
+      | { name: string; url?: string; icon?: string; summary?: string }[]
+      | null) ?? [];
+  const stack = project.tech.map((t) => ({
+    name: t,
+    item: stackItems.find((s) => s.name.toLowerCase() === t.toLowerCase()),
+  }));
 
   const siteHost = project.url
     ? new URL(project.url).hostname.replace(/^www\./, '')
@@ -85,9 +97,10 @@ const ProjectPage = async ({ params }: Props) => {
 
       <Link
         href="/projects"
-        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        className="group inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
       >
-        <ArrowLeft className="h-3.5 w-3.5" /> All projects
+        <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
+        Projects
       </Link>
 
       {/* Header */}
@@ -155,6 +168,69 @@ const ProjectPage = async ({ params }: Props) => {
         )}
       </header>
 
+      {/* Products */}
+      {products.length > 0 && (
+        <section className="mb-14">
+          <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-4">
+            What we&apos;re building
+          </h2>
+          <div className="space-y-1">
+            {products.map((product) => {
+              const row = (
+                <div className="flex items-start gap-3.5 py-4">
+                  {product.icon ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={product.icon}
+                      alt=""
+                      className="mt-0.5 h-7 w-7 shrink-0 rounded-lg object-contain"
+                    />
+                  ) : (
+                    <span
+                      aria-hidden="true"
+                      className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-muted text-xs font-semibold text-muted-foreground"
+                    >
+                      {product.name.charAt(0)}
+                    </span>
+                  )}
+                  <div className="min-w-0 space-y-1">
+                    <h3 className="font-medium text-foreground inline-flex items-center gap-1.5">
+                      {product.name}
+                      {product.url ? (
+                        <ArrowUpRight className="h-3.5 w-3.5 text-muted-foreground opacity-0 -translate-x-0.5 group-hover/product:opacity-100 group-hover/product:translate-x-0 transition-all" />
+                      ) : null}
+                    </h3>
+                    {product.summary ? (
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        {product.summary}
+                      </p>
+                    ) : null}
+                  </div>
+                </div>
+              );
+              return product.url ? (
+                <Link
+                  key={product.name}
+                  href={product.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group/product block border-b border-border/50 hover:border-border transition-colors"
+                >
+                  {row}
+                </Link>
+              ) : (
+                <div
+                  key={product.name}
+                  className="border-b border-border/50"
+                >
+                  {row}
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
       {/* Body */}
       {project.content && (
         <article className="prose prose-neutral dark:prose-invert max-w-none prose-p:leading-relaxed prose-headings:font-display prose-headings:font-normal prose-headings:tracking-tight prose-h2:text-2xl prose-a:decoration-border prose-a:underline-offset-4 hover:prose-a:decoration-foreground">
@@ -164,19 +240,38 @@ const ProjectPage = async ({ params }: Props) => {
 
       {/* Footer meta */}
       <footer className="mt-16 border-t border-border pt-8 space-y-6">
-        {project.tech.length > 0 && (
+        {stack.length > 0 && (
           <div>
-            <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-3">
+            <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-4">
               Stack
             </h2>
-            <div className="flex flex-wrap gap-2">
-              {project.tech.map((t) => (
-                <span
-                  key={t}
-                  className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground"
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+              {stack.map(({ name, item }) => (
+                <div
+                  key={name}
+                  className="flex items-center gap-3 rounded-lg border border-border/50 p-3"
                 >
-                  {t}
-                </span>
+                  {item?.iconSlug || item?.logoUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={
+                        item.iconSlug
+                          ? `https://cdn.simpleicons.org/${item.iconSlug}`
+                          : item.logoUrl || ''
+                      }
+                      alt=""
+                      className={`h-5 w-5 shrink-0 object-contain${item.iconSlug ? ' dark:invert' : ''}`}
+                    />
+                  ) : (
+                    <span
+                      aria-hidden="true"
+                      className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-muted text-[10px] font-semibold text-muted-foreground"
+                    >
+                      {name.charAt(0)}
+                    </span>
+                  )}
+                  <span className="truncate text-sm font-medium">{name}</span>
+                </div>
               ))}
             </div>
           </div>

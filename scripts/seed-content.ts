@@ -1,3 +1,4 @@
+import YAML from 'yaml';
 import 'dotenv/config';
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
@@ -10,38 +11,8 @@ const contentDir = join(import.meta.dirname, '..', 'content');
 function parseFrontmatter(raw: string): { frontmatter: Record<string, unknown>; content: string } {
   const match = raw.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
   if (!match) return { frontmatter: {}, content: raw };
-
-  const frontmatter: Record<string, unknown> = {};
-  for (const line of match[1].split('\n')) {
-    const colonIdx = line.indexOf(':');
-    if (colonIdx === -1) continue;
-    const key = line.slice(0, colonIdx).trim();
-    let value: string | unknown = line.slice(colonIdx + 1).trim();
-
-    // Remove quotes
-    if (typeof value === 'string' && value.startsWith('"') && value.endsWith('"')) {
-      value = value.slice(1, -1);
-    }
-
-    // Parse arrays
-    if (typeof value === 'string' && value.startsWith('[')) {
-      try {
-        value = JSON.parse(value.replace(/'/g, '"'));
-      } catch { /* keep as string */ }
-    }
-
-    // Parse booleans
-    if (value === 'true') value = true;
-    if (value === 'false') value = false;
-
-    // Parse numbers
-    if (typeof value === 'string' && /^\d+$/.test(value)) {
-      value = Number.parseInt(value, 10);
-    }
-
-    frontmatter[key] = value;
-  }
-
+  const frontmatter =
+    (YAML.parse(match[1]) as Record<string, unknown>) ?? {};
   return { frontmatter, content: match[2].trim() };
 }
 
@@ -130,6 +101,7 @@ async function seedProjects() {
         url: frontmatter.url as string | undefined,
         githubUrl: frontmatter.github as string | undefined,
         imageUrl: frontmatter.icon as string | undefined,
+        products: (frontmatter.products as object[]) ?? undefined,
         featured: (frontmatter.featured as boolean) ?? false,
         position: (frontmatter.order as number) ?? 99,
         startDate: frontmatter.date ? new Date(frontmatter.date as string) : undefined,
@@ -145,6 +117,7 @@ async function seedProjects() {
         url: frontmatter.url as string | undefined,
         githubUrl: frontmatter.github as string | undefined,
         imageUrl: frontmatter.icon as string | undefined,
+        products: (frontmatter.products as object[]) ?? undefined,
         featured: (frontmatter.featured as boolean) ?? false,
         position: (frontmatter.order as number) ?? 99,
         startDate: frontmatter.date ? new Date(frontmatter.date as string) : undefined,

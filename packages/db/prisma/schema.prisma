@@ -214,6 +214,7 @@ model Project {
   kind      String?   // product, client, oss, internal, experiment
   role      String?   // creator, lead, contributor, maintainer
   highlights String[]
+  products  Json?     // [{name, url?, icon?, summary}] for company pages
 
   organizationId String?
   organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
