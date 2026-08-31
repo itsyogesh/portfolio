@@ -24,20 +24,22 @@ export const Footer = async () => {
 
   return (
     <footer className="border-t border-border/50">
-      <div className="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-4 px-6 py-8">
-        <p className="text-sm text-muted-foreground">{name}</p>
-        <nav aria-label="Library" className="flex items-center gap-4">
-          {library.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors"
-            >
-              {item.name}
-            </Link>
-          ))}
-        </nav>
-        <div className="flex items-center gap-4">
+      <div className="mx-auto flex max-w-3xl flex-col gap-6 px-6 py-10 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:py-8">
+        <div className="flex items-center justify-between sm:contents">
+          <p className="text-sm text-muted-foreground">{name}</p>
+          <nav aria-label="Library" className="flex items-center gap-4 sm:order-none">
+            {library.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {item.name}
+              </Link>
+            ))}
+          </nav>
+        </div>
+        <div className="flex items-center gap-5 sm:gap-4">
           {socials.map((social) => {
             const Icon = platformIcons[social.platform] || Globe;
             return (

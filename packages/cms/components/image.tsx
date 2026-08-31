@@ -1,6 +1,6 @@
 import type { ComponentProps } from 'react';
 
-type ImageProperties = ComponentProps<'img'> & {
+type ImageProperties = Omit<ComponentProps<'img'>, 'ref'> & {
   alt: string;
 };
 

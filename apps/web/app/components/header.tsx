@@ -18,21 +18,21 @@ export const Header = ({ profileName }: { profileName: string }) => {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-sm">
-      <div className="mx-auto flex h-14 max-w-3xl items-center justify-between px-6">
+      <div className="mx-auto flex h-14 max-w-3xl items-center justify-between gap-3 px-4 sm:px-6">
         <Link
           href="/"
-          className="text-sm font-semibold tracking-tight text-foreground hover:text-foreground/80 transition-colors"
+          className="min-w-0 truncate whitespace-nowrap text-sm font-semibold tracking-tight text-foreground hover:text-foreground/80 transition-colors"
         >
           {profileName}
         </Link>
 
-        <nav className="flex items-center gap-1">
+        <nav className="flex shrink-0 items-center gap-0 sm:gap-1">
           {navigation.map((item) => (
             <Link
               key={item.href}
               href={item.href}
               className={cn(
-                'px-3 py-1.5 text-sm transition-colors rounded-md',
+                'px-2 py-1.5 text-sm transition-colors rounded-md sm:px-3',
                 pathname === item.href || pathname.startsWith(`${item.href}/`)
                   ? 'text-foreground'
                   : 'text-muted-foreground hover:text-foreground'
@@ -44,7 +44,7 @@ export const Header = ({ profileName }: { profileName: string }) => {
           <button
             type="button"
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className="ml-2 p-1.5 text-muted-foreground hover:text-foreground transition-colors rounded-md"
+            className="ml-1 p-1.5 text-muted-foreground hover:text-foreground transition-colors rounded-md sm:ml-2"
             aria-label="Toggle theme"
           >
             <Sun className="h-4 w-4 hidden dark:block" />

@@ -62,10 +62,21 @@ const ProjectPage = async ({ params }: Props) => {
     (project.products as
       | { name: string; url?: string; icon?: string; summary?: string }[]
       | null) ?? [];
-  const stack = project.tech.map((t) => ({
-    name: t,
-    item: stackItems.find((s) => s.name.toLowerCase() === t.toLowerCase()),
-  }));
+  const stack = project.tech.map((t) => {
+    const needle = t.toLowerCase();
+    return {
+      name: t,
+      item: stackItems.find((s) => {
+        const itemName = s.name.toLowerCase();
+        return (
+          itemName === needle ||
+          itemName.split('/').includes(needle) ||
+          itemName.includes(needle) ||
+          needle.includes(itemName)
+        );
+      }),
+    };
+  });
 
   const siteHost = project.url
     ? new URL(project.url).hostname.replace(/^www\./, '')
@@ -95,16 +106,18 @@ const ProjectPage = async ({ params }: Props) => {
     <div className="mx-auto max-w-2xl px-6 pt-24 pb-20">
       <JsonLd code={jsonLd} />
 
-      <Link
-        href="/projects"
-        className="group inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-      >
-        <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
-        Projects
-      </Link>
+      {project.category !== 'company' && (
+        <Link
+          href="/projects"
+          className="group mb-10 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
+          Projects
+        </Link>
+      )}
 
       {/* Header */}
-      <header className="mt-10 mb-14">
+      <header className="mb-14">
         <div className="flex items-start justify-between gap-6">
           <div className="min-w-0">
             {project.imageUrl ? (
