@@ -34,9 +34,7 @@
         "type": "founder",
         "startDate": "2023-08-28",
         "highlights": [
-          "DPIIT-recognised startup, incubated at AIC Sangam",
-          "OCPP/OCPI (v2.0–2.2.1) charging platform: Flutter app, Django + Go backend, Terraform on AWS",
-          "Co-founded with Evisha Soni"
+          "DPIIT-recognised, SISFS-backed, incubated at AIC Sangam"
         ],
         "position": 1
       },
@@ -138,20 +136,21 @@
     },
     {
       "slug": "alphasheets",
-      "name": "Alphasheets",
+      "name": "AlphaSheets",
       "type": "client",
       "industry": "Fintech tooling",
-      "description": "Collaborative spreadsheet for finance teams, built with a team out of MIT.",
+      "description": "Programmable spreadsheet for finance teams — acqui-hired by Google.",
       "experience": {
         "title": "Frontend Engineer",
         "type": "freelance",
         "startDate": "2016-11-01",
         "endDate": "2017-02-28",
         "highlights": [
-          "First independent contract — the spreadsheet grid and formula UI in React and Flux"
+          "First independent contract — the spreadsheet grid and formula UI in React and Flux; the team was later acqui-hired by Google"
         ],
         "position": 7
-      }
+      },
+      "logoUrl": "/logos/freelance/alphasheets.png"
     },
     {
       "slug": "busy-org",
@@ -222,7 +221,7 @@
         "startDate": "2018-12-01",
         "endDate": "2019-04-30",
         "highlights": [
-          "React Native barcode scanning for cashierless stores, placed through Turtle"
+          "React Native barcode scanning for cashierless stores"
         ],
         "position": 11
       }
@@ -258,13 +257,20 @@
       "position": 0
     },
     {
+      "title": "Startup India Seed Fund (SISFS) — Charge23 Labs",
+      "issuer": "Startup India (DPIIT)",
+      "type": "grant",
+      "description": "Seed funding under the Startup India Seed Fund Scheme for Chargespot.",
+      "position": 1
+    },
+    {
       "title": "Polkadot Prodigy — Winner, AI×Web3 ($6,000)",
       "issuer": "Polkadot Prodigy hackathon",
       "type": "hackathon",
       "date": "2025-06-01",
       "url": "https://wisesama.com",
       "description": "Won with Wisesama, a scam-defense platform for the Polkadot ecosystem.",
-      "position": 1
+      "position": 2
     },
     {
       "title": "CTRL Hack ZK — 2nd place ($2,300)",
@@ -272,7 +278,7 @@
       "type": "hackathon",
       "date": "2024-05-01",
       "description": "Mysign.id — verified digital signatures powered by Web3.",
-      "position": 2
+      "position": 3
     },
     {
       "title": "Intel Perceptual Computing Challenge — 2nd worldwide",
@@ -280,21 +286,21 @@
       "type": "hackathon",
       "date": "2013-06-01",
       "description": "Second place in Intel's worldwide perceptual computing contest.",
-      "position": 3
+      "position": 4
     },
     {
       "title": "BlackBerry Jam Hack — 1st place",
       "issuer": "BlackBerry India",
       "type": "hackathon",
       "date": "2013-03-01",
-      "position": 4
+      "position": 5
     },
     {
       "title": "Tizen App Challenge — 1st place",
       "issuer": "Samsung",
       "type": "hackathon",
       "date": "2013-09-01",
-      "position": 5
+      "position": 6
     }
   ]
 }
