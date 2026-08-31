@@ -5,14 +5,6 @@ import { ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
 import { getProfile } from './lib/profile';
 
-const statusColors: Record<string, string> = {
-  active: 'bg-emerald-500/15 text-emerald-400',
-  building: 'bg-amber-500/15 text-amber-400',
-  shipped: 'bg-sky-500/15 text-sky-400',
-  legacy: 'bg-zinc-500/15 text-zinc-500',
-  concept: 'bg-violet-500/15 text-violet-400',
-};
-
 const HomePage = async () => {
   const [profile, featuredProjects] = await Promise.all([
     getProfile(),
@@ -23,36 +15,87 @@ const HomePage = async () => {
   ]);
 
   const latestPosts = blog.getLatestPosts(3);
-  const name = profile?.name || 'Yogesh Kumar';
-  const headline = profile?.headline || 'Full-stack builder. 12+ years shipping products.';
+  const name = profile?.name || 'Portfolio';
+  const headline = profile?.headline || 'Personal portfolio';
+  const companies = featuredProjects.filter((p) => p.category === 'company');
+  const projects = featuredProjects.filter((p) => p.category !== 'company');
 
   return (
     <div className="mx-auto max-w-2xl px-6 pt-24 pb-20">
       {/* Hero */}
       <section className="mb-24">
+        {profile?.avatarUrl ? (
+          <div className="relative mb-8 h-20 w-20">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={profile.avatarUrl}
+              alt=""
+              aria-hidden="true"
+              className="absolute inset-0 h-full w-full scale-110 rounded-full opacity-50 blur-xl"
+            />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={profile.avatarUrl}
+              alt={name}
+              className="relative h-full w-full rounded-full object-cover shadow-lg ring-1 ring-border"
+            />
+          </div>
+        ) : null}
         <h1 className="font-display text-5xl sm:text-6xl tracking-tight leading-[1.1] mb-6">
           {name}
         </h1>
         <p className="text-lg text-muted-foreground leading-relaxed max-w-lg">
-          {headline} Currently building with AI agents and running{' '}
-          <Link
-            href="/projects"
-            className="text-foreground underline underline-offset-4 decoration-muted-foreground/40 hover:decoration-foreground transition-colors"
-          >
-            multiple ventures
-          </Link>
-          .
-        </p>
-        <p className="mt-4 text-sm text-muted-foreground/70 font-display italic">
-          Dropped out of college in 2013. Been building since.
+          {headline}
         </p>
       </section>
 
       {/* Divider */}
       <div className="border-t border-border mb-16" />
 
-      {/* Featured Projects */}
-      {featuredProjects.length > 0 && (
+      {/* Companies */}
+      {companies.length > 0 && (
+        <section className="mb-20">
+          <div className="flex items-baseline justify-between mb-8">
+            <h2 className="font-display italic text-2xl text-foreground">
+              Companies
+            </h2>
+          </div>
+          <div className="space-y-1">
+            {companies.map((project) => (
+              <Link
+                key={project.slug}
+                href={`/projects/${project.slug}`}
+                className="group flex items-center justify-between py-4 border-b border-border/50 hover:border-border transition-colors"
+              >
+                <div className="flex min-w-0 items-start gap-3">
+                  {project.imageUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={project.imageUrl} alt="" className="mt-1 h-6 w-6 shrink-0 rounded-md object-contain" />
+                  ) : (
+                    <span aria-hidden="true" className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-muted text-[11px] font-semibold text-muted-foreground">
+                      {project.title.charAt(0)}
+                    </span>
+                  )}
+                <div className="min-w-0 space-y-1">
+                  <h3 className="font-medium text-foreground truncate">
+                    {project.title}
+                  </h3>
+                  {project.summary ? (
+                    <p className="text-sm text-muted-foreground line-clamp-1">
+                      {project.summary}
+                    </p>
+                  ) : null}
+                </div>
+                </div>
+                <ArrowUpRight className="h-4 w-4 text-muted-foreground opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all shrink-0 ml-4" />
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Projects */}
+      {projects.length > 0 && (
         <section className="mb-20">
           <div className="flex items-baseline justify-between mb-8">
             <h2 className="font-display italic text-2xl text-foreground">
@@ -66,21 +109,31 @@ const HomePage = async () => {
             </Link>
           </div>
           <div className="space-y-1">
-            {featuredProjects.map((project) => (
+            {projects.map((project) => (
               <Link
                 key={project.slug}
                 href={`/projects/${project.slug}`}
                 className="group flex items-center justify-between py-4 border-b border-border/50 hover:border-border transition-colors"
               >
-                <div className="flex items-center gap-4 min-w-0">
+                <div className="flex min-w-0 items-start gap-3">
+                  {project.imageUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={project.imageUrl} alt="" className="mt-1 h-6 w-6 shrink-0 rounded-md object-contain" />
+                  ) : (
+                    <span aria-hidden="true" className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-muted text-[11px] font-semibold text-muted-foreground">
+                      {project.title.charAt(0)}
+                    </span>
+                  )}
+                <div className="min-w-0 space-y-1">
                   <h3 className="font-medium text-foreground truncate">
                     {project.title}
                   </h3>
-                  <span
-                    className={`text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full shrink-0 ${statusColors[project.status] ?? 'bg-zinc-500/15 text-zinc-500'}`}
-                  >
-                    {project.status}
-                  </span>
+                  {project.summary ? (
+                    <p className="text-sm text-muted-foreground line-clamp-1">
+                      {project.summary}
+                    </p>
+                  ) : null}
+                </div>
                 </div>
                 <ArrowUpRight className="h-4 w-4 text-muted-foreground opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all shrink-0 ml-4" />
               </Link>

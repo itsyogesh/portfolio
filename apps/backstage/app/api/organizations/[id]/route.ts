@@ -17,6 +17,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       where: { id },
       data: {
         ...(body.name !== undefined && { name: body.name }),
+        ...(body.slug !== undefined && { slug: body.slug }),
         ...(body.description !== undefined && {
           description: body.description || null,
         }),
@@ -26,6 +27,9 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
           location: body.location || null,
         }),
         ...(body.type !== undefined && { type: body.type }),
+        ...(body.industry !== undefined && {
+          industry: body.industry || null,
+        }),
       },
     });
 

@@ -30,11 +30,13 @@ const orgTypes = ['company', 'nonprofit', 'community', 'freelance'] as const;
 type Organization = {
   id: string;
   name: string;
+  slug: string;
   description: string | null;
   logoUrl: string | null;
   website: string | null;
   location: string | null;
   type: string;
+  industry: string | null;
 };
 
 export function OrgForm({
@@ -50,20 +52,36 @@ export function OrgForm({
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState(org?.name ?? '');
+  const [slug, setSlug] = useState(org?.slug ?? '');
   const [description, setDescription] = useState(org?.description ?? '');
   const [logoUrl, setLogoUrl] = useState(org?.logoUrl ?? '');
   const [website, setWebsite] = useState(org?.website ?? '');
   const [location, setLocation] = useState(org?.location ?? '');
   const [type, setType] = useState(org?.type ?? 'company');
+  const [industry, setIndustry] = useState(org?.industry ?? '');
+
+  const handleNameChange = (value: string) => {
+    setName(value);
+    if (!isEditing) {
+      setSlug(
+        value
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-|-$/g, '')
+      );
+    }
+  };
 
   const resetForm = () => {
     if (!isEditing) {
       setName('');
+      setSlug('');
       setDescription('');
       setLogoUrl('');
       setWebsite('');
       setLocation('');
       setType('company');
+      setIndustry('');
     }
   };
 
@@ -72,7 +90,7 @@ export function OrgForm({
     setIsLoading(true);
 
     try {
-      const payload = { name, description, logoUrl, website, location, type };
+      const payload = { name, slug, description, logoUrl, website, location, type, industry };
 
       const res = isEditing
         ? await fetch(`/api/organizations/${org.id}`, {
@@ -144,16 +162,29 @@ export function OrgForm({
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-1.5">
-            <Label htmlFor="org-name">Name</Label>
-            <Input
-              id="org-name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Acme Corp"
-              required
-              disabled={isLoading}
-            />
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="org-name">Name</Label>
+              <Input
+                id="org-name"
+                value={name}
+                onChange={(e) => handleNameChange(e.target.value)}
+                placeholder="Acme Corp"
+                required
+                disabled={isLoading}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="org-slug">Slug</Label>
+              <Input
+                id="org-slug"
+                value={slug}
+                onChange={(e) => setSlug(e.target.value)}
+                placeholder="acme-corp"
+                required
+                disabled={isLoading}
+              />
+            </div>
           </div>
 
           <div className="space-y-1.5">
@@ -171,13 +202,23 @@ export function OrgForm({
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <Label htmlFor="org-logoUrl">Logo URL</Label>
-              <Input
-                id="org-logoUrl"
-                value={logoUrl}
-                onChange={(e) => setLogoUrl(e.target.value)}
-                placeholder="https://..."
-                disabled={isLoading}
-              />
+              <div className="flex items-center gap-2">
+                <Input
+                  id="org-logoUrl"
+                  value={logoUrl}
+                  onChange={(e) => setLogoUrl(e.target.value)}
+                  placeholder="https://..."
+                  disabled={isLoading}
+                  className="flex-1"
+                />
+                {logoUrl.trim() && (
+                  <img
+                    src={logoUrl.trim()}
+                    alt="Logo preview"
+                    className="h-8 w-8 shrink-0 rounded object-contain border border-border/50"
+                  />
+                )}
+              </div>
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="org-website">Website</Label>
@@ -217,6 +258,17 @@ export function OrgForm({
                 </SelectContent>
               </Select>
             </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="org-industry">Industry</Label>
+            <Input
+              id="org-industry"
+              value={industry}
+              onChange={(e) => setIndustry(e.target.value)}
+              placeholder="Technology, Healthcare, Finance..."
+              disabled={isLoading}
+            />
           </div>
 
           <DialogFooter>

@@ -42,6 +42,7 @@ type WorkExperience = {
   startDate: string;
   endDate: string | null;
   type: string;
+  highlights: string[];
   position: number;
   organizationId: string;
 };
@@ -78,6 +79,9 @@ export function WorkForm({
     isEditing ? work.endDate === null : false
   );
   const [type, setType] = useState(work?.type ?? 'fulltime');
+  const [highlightsInput, setHighlightsInput] = useState(
+    work?.highlights?.join(', ') ?? ''
+  );
 
   const resetForm = () => {
     if (!isEditing) {
@@ -87,6 +91,7 @@ export function WorkForm({
       setEndDate('');
       setIsCurrent(false);
       setType('fulltime');
+      setHighlightsInput('');
     }
   };
 
@@ -95,12 +100,18 @@ export function WorkForm({
     setIsLoading(true);
 
     try {
+      const highlightsArray = highlightsInput
+        .split(',')
+        .map((h) => h.trim())
+        .filter(Boolean);
+
       const payload = {
         title,
         description,
         startDate,
         endDate: isCurrent ? null : endDate || null,
         type,
+        highlights: highlightsArray,
       };
 
       const res = isEditing
@@ -240,6 +251,17 @@ export function WorkForm({
                 disabled={isLoading || isCurrent}
               />
             </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="work-highlights">Highlights (comma-separated)</Label>
+            <Input
+              id="work-highlights"
+              value={highlightsInput}
+              onChange={(e) => setHighlightsInput(e.target.value)}
+              placeholder="Led team of 5, Shipped v2.0, Reduced latency by 40%"
+              disabled={isLoading}
+            />
           </div>
 
           <div className="flex items-center gap-2">

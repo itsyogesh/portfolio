@@ -1,25 +1,24 @@
 ---
 title: "Relaycode"
-description: "Polkadot extrinsics builder funded by Web3 Foundation. Modern developer tooling for Substrate chains."
-date: "2024-10-01"
+description: "Build Polkadot transactions like a human — readable inputs on one side, SCALE-encoded hex on the other."
+date: "2024-10-09"
 status: "active"
 category: "web3"
-tech: ["Next.js", "TypeScript", "Dedot", "Polkadot", "Substrate"]
+tech: ["Next.js", "React", "TypeScript", "Dedot", "Tailwind"]
 url: "https://relaycode.org"
+icon: "/logos/projects/relaycode.svg"
 featured: true
-order: 4
+order: 3
 ---
 
-Relaycode is a developer tool for building and submitting extrinsics (transactions) on Polkadot, Kusama, and other Substrate chains. It's funded by the Web3 Foundation.
+Relaycode makes building Polkadot transactions feel human. A dual-pane interface keeps readable inputs on one side and the SCALE-encoded hex on the other — pick a chain, pick a pallet, fill in parameters with more than twenty type-aware input components, sign with your wallet.
 
-## W3F Grant
+## The grant
 
-The grant application was merged in October 2024. Milestone 2 was delivered in February 2026.
+The Web3 Foundation funded Relaycode through its grants program — the application was merged in October 2024, and **Milestone 2 (type-aware components, wallet integration, production UX) was delivered in February 2026**. It's built on Dedot, the modern Polkadot SDK, rather than the legacy API.
 
-## Technical Approach
+## The longer story
 
-Instead of using the legacy @polkadot/api, Relaycode is built on Dedot — a modern Substrate interaction library. The UI features 24+ specialized input component types for various extrinsic parameters, with a dual-pane interface showing human-readable inputs alongside SCALE-encoded hex.
+Relaycode is also a redemption arc. Years earlier I took a Kusama treasury grant for the same idea — Extrinsics.io — and didn't finish it. Instead of letting that sit, I rebuilt the concept from scratch, applied for W3F backing under a new name, and delivered. The accountability post for the original grant is part of the plan, not a secret.
 
-## Ecosystem Context
-
-Relaycode supports Polkadot, Kusama, and Westend chains with built-in wallet integration for signing transactions. It integrates with the Wisesama API for chain metadata.
+My Web3 work — Relaycode, the Wisesama anti-scam platform it integrates with, hackathon wins at Polkadot Prodigy ($6,000) and CTRL Hack ZK ($2,300) — lives here on my personal profile, separate from the studio.

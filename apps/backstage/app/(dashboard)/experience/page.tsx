@@ -122,11 +122,13 @@ export default async function ExperiencePage() {
                     org={{
                       id: org.id,
                       name: org.name,
+                      slug: org.slug,
                       description: org.description,
                       logoUrl: org.logoUrl,
                       website: org.website,
                       location: org.location,
                       type: org.type,
+                      industry: org.industry,
                     }}
                     trigger={
                       <Button variant="outline" size="sm">
@@ -179,6 +181,7 @@ export default async function ExperiencePage() {
                             startDate: work.startDate.toISOString(),
                             endDate: work.endDate?.toISOString() ?? null,
                             type: work.type,
+                            highlights: work.highlights,
                             position: work.position,
                             organizationId: work.organizationId,
                           }}

@@ -27,6 +27,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
           endDate: body.endDate ? new Date(body.endDate) : null,
         }),
         ...(body.type !== undefined && { type: body.type }),
+        ...(body.highlights !== undefined && { highlights: body.highlights }),
         ...(body.position !== undefined && { position: body.position }),
       },
     });

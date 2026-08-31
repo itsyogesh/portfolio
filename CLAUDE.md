@@ -4,21 +4,24 @@ Personal portfolio monorepo for itsyogesh.fyi. Two Next.js 16 apps (public site 
 
 # Structure
 
-- `apps/web/` — Public portfolio site (port 3000)
-- `apps/backstage/` — Owner-only admin dashboard (port 3001)
+- `apps/web/` — Public portfolio site (port 4000)
+- `apps/backstage/` — Owner-only admin dashboard (port 4001)
 - `packages/db/` — Prisma ORM + Neon serverless adapter, all models
 - `packages/auth/` — Better Auth (email/password + optional GitHub OAuth)
 - `packages/cms/` — content-collections for MDX articles/projects
 - `packages/seo/` — Metadata helper and JSON-LD component
 - `packages/base/` — shadcn/ui components, theme, fonts, utilities
 - `packages/ai/` — OpenAI integration for bookmark processing
+- `packages/calendar/` — Shared Google Calendar service (OAuth, API, availability, encryption)
 - `content/` — MDX articles and projects, stack.json, timeline.json
 - `scripts/` — Seed, sync, and bookmark processing CLI scripts
 - `tooling/` — Shared TypeScript and Next.js configs
 
 # Commands
 
-- `pnpm dev` — Start both apps (web:3000, backstage:3001)
+- `pnpm dev` — Start both apps (web:4000, backstage:4001)
+- `pnpm lint` — Run repository lint checks
+- `pnpm typecheck` — Type-check all apps and packages
 - `pnpm build` — Build all packages and apps
 - `pnpm dev --filter=web` — Start only the public site
 - `pnpm dev --filter=backstage` — Start only the admin
@@ -38,6 +41,10 @@ Personal portfolio monorepo for itsyogesh.fyi. Two Next.js 16 apps (public site 
 - `requireAdminPage()` guards server components (redirects to /sign-in)
 - Singleton Profile pattern: `id @default("owner")`, upsert by fixed ID
 - Stars use soft-cleanup (isStarred + unstarredAt) to preserve list assignments
+- Calendar & Scheduling: packages/calendar is shared between backstage (CRUD, account mgmt) and web (availability, booking)
+- Google OAuth tokens are encrypted at rest (AES-256-GCM) via CALENDAR_ENCRYPTION_KEY
+- Double-booking prevention uses PostgreSQL exclusion constraint + two-phase booking
+- Public scheduling pages at /schedule/[slug] — no auth required
 
 # Gotchas
 
@@ -53,4 +60,8 @@ Personal portfolio monorepo for itsyogesh.fyi. Two Next.js 16 apps (public site 
 See `.env.example` files in root, `apps/web/`, and `apps/backstage/` for required variables. Critical ones:
 - `DATABASE_URL` / `DIRECT_URL` — Neon PostgreSQL connection strings
 - `BETTER_AUTH_SECRET` — Auth session signing
+- `BETTER_AUTH_URL` / `NEXT_PUBLIC_APP_URL` — Backstage production origin
 - `OWNER_EMAIL` — Backstage access control (backstage only)
+- `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` — Google OAuth for calendar (backstage)
+- `GOOGLE_REDIRECT_URI` — OAuth callback URL (backstage)
+- `CALENDAR_ENCRYPTION_KEY` — 32-byte hex for token encryption (backstage + web)

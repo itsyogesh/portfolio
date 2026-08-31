@@ -1,16 +1,16 @@
-import { database } from '@packages/db';
 import { ImageResponse } from 'next/og';
+import { getProfile } from './lib/profile';
+import { getSiteUrl } from './lib/site';
 
 export const alt = 'Portfolio';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
 export default async function Image() {
-  const profile = await database.profile.findFirst();
-  const name = profile?.name || 'Yogesh Kumar';
-  const headline =
-    profile?.headline || 'Full-stack builder. 12+ years shipping products.';
-  const website = profile?.website || 'itsyogesh.fyi';
+  const [profile, siteUrl] = await Promise.all([getProfile(), getSiteUrl()]);
+  const name = profile?.name || 'Portfolio';
+  const headline = profile?.headline || 'Projects, writing, and work.';
+  const website = profile?.website || siteUrl.hostname;
 
   return new ImageResponse(
     (

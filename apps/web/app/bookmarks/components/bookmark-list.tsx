@@ -162,12 +162,17 @@ export function BookmarkList({
   );
 }
 
+const bookmarkSkeletonKeys = Array.from(
+  { length: 20 },
+  (_, index) => `bookmark-skeleton-${index}`
+);
+
 export function BookmarkListSkeleton() {
   return (
     <div className="space-y-0.5">
-      {Array.from({ length: 20 }).map((_, i) => (
+      {bookmarkSkeletonKeys.map((key) => (
         <div
-          key={`skeleton-${i}`}
+          key={key}
           className="flex items-start justify-between py-2.5 border-b border-border/30"
         >
           <div className="flex-1 space-y-1.5">

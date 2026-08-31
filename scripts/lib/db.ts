@@ -8,6 +8,11 @@ neonConfig.webSocketConstructor = ws;
 const clientModule = await import('../../packages/db/generated/client.js');
 const PrismaClient = clientModule.PrismaClient;
 
-const adapter = new PrismaNeon({ connectionString: process.env.DATABASE_URL! });
+const connectionString = process.env.DATABASE_URL;
+if (!connectionString) {
+  throw new Error('DATABASE_URL environment variable is not configured');
+}
+
+const adapter = new PrismaNeon({ connectionString });
 
 export const prisma = new PrismaClient({ adapter });

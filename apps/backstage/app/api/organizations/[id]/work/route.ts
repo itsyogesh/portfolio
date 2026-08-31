@@ -39,6 +39,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         startDate: new Date(body.startDate),
         endDate: body.endDate ? new Date(body.endDate) : null,
         type: body.type || 'fulltime',
+        highlights: body.highlights || [],
         position: (maxPosition._max.position ?? -1) + 1,
         organizationId: id,
       },

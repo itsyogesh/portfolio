@@ -18,7 +18,7 @@ export async function requireAdmin() {
       session: null,
     };
   }
-  const ownerEmail = process.env.OWNER_EMAIL;
+  const ownerEmail = process.env.OWNER_EMAIL?.trim().toLowerCase();
   if (!ownerEmail) {
     return {
       error: NextResponse.json(
@@ -28,7 +28,7 @@ export async function requireAdmin() {
       session: null,
     };
   }
-  if (session.user.email !== ownerEmail) {
+  if (session.user.email.trim().toLowerCase() !== ownerEmail) {
     return {
       error: NextResponse.json({ error: 'Forbidden' }, { status: 403 }),
       session: null,
@@ -38,12 +38,15 @@ export async function requireAdmin() {
 }
 
 export async function requireAdminPage() {
-  const ownerEmail = process.env.OWNER_EMAIL;
+  const ownerEmail = process.env.OWNER_EMAIL?.trim().toLowerCase();
   if (!ownerEmail) {
     throw new Error('OWNER_EMAIL environment variable is not configured');
   }
   const session = await getSession();
-  if (!session?.user || session.user.email !== ownerEmail) {
+  if (
+    !session?.user ||
+    session.user.email.trim().toLowerCase() !== ownerEmail
+  ) {
     redirect('/sign-in');
   }
   return session;

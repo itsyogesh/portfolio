@@ -29,6 +29,8 @@ export default async function ProfilePage() {
         location: profile.location,
         website: profile.website,
         resumeUrl: profile.resumeUrl,
+        email: profile.email,
+        phone: profile.phone,
       }
     : null;
 

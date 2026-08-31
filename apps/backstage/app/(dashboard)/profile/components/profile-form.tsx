@@ -18,6 +18,8 @@ type ProfileData = {
   location: string | null;
   website: string | null;
   resumeUrl: string | null;
+  email: string | null;
+  phone: string | null;
 } | null;
 
 type ProfileFormProps = {
@@ -34,6 +36,8 @@ export function ProfileForm({ profile }: ProfileFormProps) {
   const [location, setLocation] = useState(profile?.location ?? '');
   const [website, setWebsite] = useState(profile?.website ?? '');
   const [resumeUrl, setResumeUrl] = useState(profile?.resumeUrl ?? '');
+  const [email, setEmail] = useState(profile?.email ?? '');
+  const [phone, setPhone] = useState(profile?.phone ?? '');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,6 +55,8 @@ export function ProfileForm({ profile }: ProfileFormProps) {
           location,
           website,
           resumeUrl,
+          email,
+          phone,
         }),
       });
 
@@ -151,6 +157,30 @@ export function ProfileForm({ profile }: ProfileFormProps) {
             value={resumeUrl}
             onChange={(e) => setResumeUrl(e.target.value)}
             placeholder="https://..."
+            disabled={isLoading}
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="space-y-1.5">
+          <Label htmlFor="profile-email">Email</Label>
+          <Input
+            id="profile-email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@example.com"
+            disabled={isLoading}
+          />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="profile-phone">Phone</Label>
+          <Input
+            id="profile-phone"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="+1 (555) 123-4567"
             disabled={isLoading}
           />
         </div>

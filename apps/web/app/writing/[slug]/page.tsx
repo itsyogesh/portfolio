@@ -1,7 +1,6 @@
 import { blog } from '@packages/cms';
 import { Body } from '@packages/cms/components/body';
 import { CodeBlock } from '@packages/cms/components/code-block';
-import { createMetadata } from '@packages/seo/metadata';
 import { JsonLd } from '@packages/seo/json-ld';
 import { format } from 'date-fns';
 import { ArrowLeft } from 'lucide-react';
@@ -9,6 +8,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getProfile } from '../../lib/profile';
+import { createProfileMetadata } from '../../lib/metadata';
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -21,9 +21,10 @@ export const generateMetadata = async ({ params }: Props): Promise<Metadata> => 
   const { slug } = await params;
   const post = blog.getPost(slug);
   if (!post) return {};
-  return createMetadata({
+  return createProfileMetadata({
     title: post._title,
     description: post.description,
+    path: `/writing/${post._slug}`,
   });
 };
 
@@ -35,8 +36,8 @@ const ArticlePage = async ({ params }: Props) => {
   ]);
   if (!post) notFound();
 
-  const authorName = profile?.name || 'Yogesh Kumar';
-  const authorUrl = profile?.website || 'https://itsyogesh.fyi';
+  const authorName = profile?.name || 'Portfolio owner';
+  const authorUrl = profile?.website || undefined;
 
   return (
     <>

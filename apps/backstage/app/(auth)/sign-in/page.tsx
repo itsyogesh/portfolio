@@ -5,7 +5,6 @@ import { Input } from '@packages/base/components/ui/input';
 import { Label } from '@packages/base/components/ui/label';
 import { signIn } from '@packages/auth/client';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 export default function SignInPage() {
@@ -14,7 +13,6 @@ export default function SignInPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,7 +27,7 @@ export default function SignInPage() {
         return;
       }
 
-      router.push('/');
+      window.location.replace('/');
     } catch {
       setError('An unexpected error occurred');
     } finally {

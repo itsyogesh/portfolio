@@ -32,10 +32,18 @@ export type ProjectData = {
   position: number;
   startDate: string | null;
   endDate: string | null;
+  kind: string | null;
+  role: string | null;
+  highlights: string[];
+  organizationId: string | null;
+  organization: { id: string; name: string } | null;
 };
+
+type OrgOption = { id: string; name: string };
 
 type ProjectTableProps = {
   projects: ProjectData[];
+  organizations: OrgOption[];
 };
 
 const statusVariant: Record<
@@ -49,7 +57,7 @@ const statusVariant: Record<
   concept: 'outline',
 };
 
-export function ProjectTable({ projects }: ProjectTableProps) {
+export function ProjectTable({ projects, organizations }: ProjectTableProps) {
   const router = useRouter();
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
@@ -78,6 +86,7 @@ export function ProjectTable({ projects }: ProjectTableProps) {
     <div className="space-y-4">
       <div className="flex justify-end">
         <ProjectFormDialog
+          organizations={organizations}
           trigger={
             <Button size="sm">
               <Plus className="h-4 w-4 mr-1" />
@@ -151,6 +160,7 @@ export function ProjectTable({ projects }: ProjectTableProps) {
                   <div className="flex items-center justify-end gap-1">
                     <ProjectFormDialog
                       project={project}
+                      organizations={organizations}
                       trigger={
                         <button
                           type="button"

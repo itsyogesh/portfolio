@@ -7,6 +7,6 @@
   },
   "devDependencies": {
     "@tooling/typescript-config": "workspace:*",
-    "next": "15.5.9"
+    "next": "16.3.0"
   }
 }

@@ -15,8 +15,15 @@ import { Label } from '@packages/base/components/ui/label';
 import { Textarea } from '@packages/base/components/ui/textarea';
 import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { toast } from 'sonner';
+
+type UniversitySuggestion = {
+  name: string;
+  country: string;
+  url: string | null;
+  domain: string | null;
+};
 
 type Education = {
   id: string;
@@ -27,6 +34,9 @@ type Education = {
   startDate: string | null;
   endDate: string | null;
   logoUrl: string | null;
+  url: string | null;
+  gpa: string | null;
+  courses: string[];
   position: number;
 };
 
@@ -63,6 +73,50 @@ export function EducationForm({
     toDateInputValue(education?.endDate ?? null)
   );
   const [logoUrl, setLogoUrl] = useState(education?.logoUrl ?? '');
+  const [url, setUrl] = useState(education?.url ?? '');
+  const [gpa, setGpa] = useState(education?.gpa ?? '');
+  const [coursesInput, setCoursesInput] = useState(
+    education?.courses?.join(', ') ?? ''
+  );
+  const [suggestions, setSuggestions] = useState<UniversitySuggestion[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(null);
+
+  const searchUniversities = useCallback(async (query: string) => {
+    if (query.length < 2) {
+      setSuggestions([]);
+      return;
+    }
+    try {
+      const res = await fetch(`/api/universities?q=${encodeURIComponent(query)}&limit=8`);
+      if (res.ok) {
+        const data = await res.json();
+        setSuggestions(data);
+      }
+    } catch {
+      // Silently fail — user can still type manually
+    }
+  }, []);
+
+  const handleInstitutionChange = (value: string) => {
+    setInstitution(value);
+    setShowSuggestions(true);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => searchUniversities(value), 300);
+  };
+
+  const selectSuggestion = (suggestion: UniversitySuggestion) => {
+    setInstitution(suggestion.name);
+    if (suggestion.url) setUrl(suggestion.url);
+    setSuggestions([]);
+    setShowSuggestions(false);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, []);
 
   const resetForm = () => {
     if (!isEditing) {
@@ -73,6 +127,9 @@ export function EducationForm({
       setStartDate('');
       setEndDate('');
       setLogoUrl('');
+      setUrl('');
+      setGpa('');
+      setCoursesInput('');
     }
   };
 
@@ -81,6 +138,11 @@ export function EducationForm({
     setIsLoading(true);
 
     try {
+      const coursesArray = coursesInput
+        .split(',')
+        .map((c) => c.trim())
+        .filter(Boolean);
+
       const payload = {
         institution,
         degree,
@@ -89,6 +151,9 @@ export function EducationForm({
         startDate: startDate || null,
         endDate: endDate || null,
         logoUrl,
+        url,
+        gpa,
+        courses: coursesArray,
       };
 
       const res = isEditing
@@ -162,16 +227,34 @@ export function EducationForm({
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-1.5">
+          <div className="space-y-1.5 relative">
             <Label htmlFor="edu-institution">Institution</Label>
             <Input
               id="edu-institution"
               value={institution}
-              onChange={(e) => setInstitution(e.target.value)}
-              placeholder="University of California"
+              onChange={(e) => handleInstitutionChange(e.target.value)}
+              onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+              onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
+              placeholder="Start typing to search universities..."
               required
               disabled={isLoading}
+              autoComplete="off"
             />
+            {showSuggestions && suggestions.length > 0 && (
+              <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-popover border border-border rounded-md shadow-md max-h-48 overflow-y-auto">
+                {suggestions.map((s) => (
+                  <button
+                    key={`${s.name}-${s.country}`}
+                    type="button"
+                    className="w-full text-left px-3 py-2 text-sm hover:bg-muted transition-colors"
+                    onMouseDown={() => selectSuggestion(s)}
+                  >
+                    <span className="font-medium">{s.name}</span>
+                    <span className="text-muted-foreground ml-2 text-xs">{s.country}</span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-3">
@@ -232,15 +315,60 @@ export function EducationForm({
             </div>
           </div>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="edu-logoUrl">Logo URL</Label>
-            <Input
-              id="edu-logoUrl"
-              value={logoUrl}
-              onChange={(e) => setLogoUrl(e.target.value)}
-              placeholder="https://..."
-              disabled={isLoading}
-            />
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="edu-logoUrl">Logo URL</Label>
+              <div className="flex items-center gap-2">
+                <Input
+                  id="edu-logoUrl"
+                  value={logoUrl}
+                  onChange={(e) => setLogoUrl(e.target.value)}
+                  placeholder="https://..."
+                  disabled={isLoading}
+                  className="flex-1"
+                />
+                {logoUrl.trim() && (
+                  <img
+                    src={logoUrl.trim()}
+                    alt="Logo preview"
+                    className="h-8 w-8 shrink-0 rounded object-contain border border-border/50"
+                  />
+                )}
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="edu-url">Institution URL</Label>
+              <Input
+                id="edu-url"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                placeholder="https://university.edu"
+                disabled={isLoading}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="edu-gpa">GPA / Score</Label>
+              <Input
+                id="edu-gpa"
+                value={gpa}
+                onChange={(e) => setGpa(e.target.value)}
+                placeholder="3.8 / 4.0"
+                disabled={isLoading}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="edu-courses">Courses (comma-separated)</Label>
+              <Input
+                id="edu-courses"
+                value={coursesInput}
+                onChange={(e) => setCoursesInput(e.target.value)}
+                placeholder="Data Structures, Algorithms..."
+                disabled={isLoading}
+              />
+            </div>
           </div>
 
           <DialogFooter>

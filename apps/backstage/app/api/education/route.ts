@@ -35,6 +35,9 @@ export async function POST(request: NextRequest) {
         startDate: body.startDate ? new Date(body.startDate) : null,
         endDate: body.endDate ? new Date(body.endDate) : null,
         logoUrl: body.logoUrl || null,
+        url: body.url || null,
+        gpa: body.gpa || null,
+        courses: body.courses || [],
         position: (maxPosition._max.position ?? -1) + 1,
       },
     });

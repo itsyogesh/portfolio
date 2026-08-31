@@ -50,30 +50,32 @@ function parseFrontmatter(raw: string): { frontmatter: Record<string, unknown>; 
 async function seedProfile() {
   console.log('Seeding profile...');
 
-  const bio = `I dropped out of engineering college in 2013 and started building software. Since then, I've shipped products across fintech, Web3, EV infrastructure, e-commerce, and developer tools.
+  const bio = `I've been building software products since 2013 — first inside other people's startups, now mostly through companies of my own. The pattern has never changed: learn by shipping.
 
-My first real venture was Unstudious, an EdTech startup tackling book piracy in India. Matrix Partners and Tracxn noticed. That was enough validation to keep going.
+The early years were employment and contracts — Paytm (seller platform, then growth engineering), four years building a fintech app at Pei that Americans used every day, a stint at Flex after the acquihire. Before all of that there was Unstudious, my first venture, an EdTech idea good enough that Matrix Partners and Tracxn came asking. It didn't become a company, but it made me one.
 
-I spent two years at Paytm (seller dashboard backend, then growth engineering), four years at Pei (a payment fintech), and a stint at Flex post-acquisition before going fully independent.
+In 2019 I started **Droidsize**, the product studio where most of my work lives today — SaaS and AI products like Domain Collective, Sparkles, and TripleWave, built on shared rails that make every next product faster. In 2023 my wife and I founded **Charge23 Labs** to build Chargespot, EV charging for India — DPIIT-recognised, incubated at AIC Sangam, and the hardest problem I've picked yet. On my own time I build in the Polkadot ecosystem: Relaycode is funded by the Web3 Foundation, with its second milestone delivered in early 2026.
 
-Today I run Droidsize Technologies, a product studio building SaaS and AI tools. I'm also building Chargespot (EV charging infrastructure through Charge23 Labs) and Relaycode (Polkadot developer tooling funded by the Web3 Foundation).
+Since late 2025 I've built almost everything with AI agents in the loop. It's the biggest shift in how I work since I learned to program — I ship faster today than at any point in thirteen years.
 
-Since late 2025, I've been building almost everything with AI agents. Claude Code changed how I work. I ship faster now than at any point in my career.`;
+What I'm optimising for now: fewer, better products. Public work over private drafts. And the kind of compounding that only shows up when you keep building for a long time.`;
 
   await prisma.profile.upsert({
     where: { id: 'owner' },
     update: {
       name: 'Yogesh Kumar',
-      headline: 'Full-stack builder. 12+ years shipping products.',
+      headline: 'I make digital things. Building Droidsize for a better internet and Chargespot for a better world — from Delhi, since 2013.',
       bio,
       website: 'https://itsyogesh.fyi',
+      avatarUrl: '/avatar.jpg',
     },
     create: {
       id: 'owner',
       name: 'Yogesh Kumar',
-      headline: 'Full-stack builder. 12+ years shipping products.',
+      headline: 'I make digital things. Building Droidsize for a better internet and Chargespot for a better world — from Delhi, since 2013.',
       bio,
       website: 'https://itsyogesh.fyi',
+      avatarUrl: '/avatar.jpg',
     },
   });
 
@@ -127,6 +129,7 @@ async function seedProjects() {
         tech: (frontmatter.tech as string[]) || [],
         url: frontmatter.url as string | undefined,
         githubUrl: frontmatter.github as string | undefined,
+        imageUrl: frontmatter.icon as string | undefined,
         featured: (frontmatter.featured as boolean) ?? false,
         position: (frontmatter.order as number) ?? 99,
         startDate: frontmatter.date ? new Date(frontmatter.date as string) : undefined,
@@ -141,6 +144,7 @@ async function seedProjects() {
         tech: (frontmatter.tech as string[]) || [],
         url: frontmatter.url as string | undefined,
         githubUrl: frontmatter.github as string | undefined,
+        imageUrl: frontmatter.icon as string | undefined,
         featured: (frontmatter.featured as boolean) ?? false,
         position: (frontmatter.order as number) ?? 99,
         startDate: frontmatter.date ? new Date(frontmatter.date as string) : undefined,
@@ -153,6 +157,19 @@ async function seedProjects() {
 }
 
 // ─── Seed Stack ──────────────────────────────────────────────────────
+
+async function cleanupRemovedProjects() {
+  const projectsDir = join(contentDir, 'projects');
+  const slugs = readdirSync(projectsDir)
+    .filter((f) => f.endsWith('.mdx'))
+    .map((f) => f.replace('.mdx', ''));
+  const removed = await prisma.project.deleteMany({
+    where: { slug: { notIn: slugs } },
+  });
+  if (removed.count > 0) {
+    console.log(`  Removed ${removed.count} project(s) no longer in content/.`);
+  }
+}
 
 async function seedStack() {
   console.log('Seeding stack...');
@@ -195,11 +212,13 @@ async function seedStack() {
         },
         update: {
           description: item.description,
+          iconSlug: item.iconSlug || null,
           position: ii,
         },
         create: {
           name: item.name,
           description: item.description,
+          iconSlug: item.iconSlug || null,
           position: ii,
           categoryId: category.id,
         },
@@ -213,28 +232,142 @@ async function seedStack() {
 
 // ─── Seed Timeline ───────────────────────────────────────────────────
 
+
+// ─── Seed Career (organizations, experience, accolades) ─────────────
+
+async function seedCareer() {
+  console.log('Seeding career...');
+
+  const raw = JSON.parse(
+    readFileSync(join(contentDir, 'pages', 'career.json'), 'utf-8'),
+  ) as {
+    organizations: Array<{
+      slug: string;
+      name: string;
+      type: string;
+      website?: string;
+      location?: string;
+      industry?: string;
+      description?: string;
+      logoUrl?: string;
+      experience?: {
+        title: string;
+        type: string;
+        startDate: string;
+        endDate?: string;
+        highlights?: string[];
+        position?: number;
+      };
+    }>;
+    accolades: Array<{
+      title: string;
+      issuer?: string;
+      type: string;
+      date?: string;
+      url?: string;
+      description?: string;
+      position?: number;
+    }>;
+  };
+
+  // Remove organizations (and their experience) no longer in the file.
+  const keepSlugs = raw.organizations.map((o) => o.slug);
+  const staleOrgs = await prisma.organization.findMany({
+    where: { slug: { notIn: keepSlugs } },
+    select: { id: true, slug: true },
+  });
+  if (staleOrgs.length > 0) {
+    await prisma.workExperience.deleteMany({
+      where: { organizationId: { in: staleOrgs.map((o) => o.id) } },
+    });
+    await prisma.organization.deleteMany({
+      where: { id: { in: staleOrgs.map((o) => o.id) } },
+    });
+    console.log(
+      `  Removed ${staleOrgs.length} org(s): ${staleOrgs.map((o) => o.slug).join(', ')}`,
+    );
+  }
+
+  for (const org of raw.organizations) {
+    const record = await prisma.organization.upsert({
+      where: { slug: org.slug },
+      update: {
+        name: org.name,
+        type: org.type,
+        website: org.website,
+        location: org.location,
+        industry: org.industry,
+        description: org.description,
+        logoUrl: org.logoUrl,
+      },
+      create: {
+        slug: org.slug,
+        name: org.name,
+        type: org.type,
+        website: org.website,
+        location: org.location,
+        industry: org.industry,
+        description: org.description,
+        logoUrl: org.logoUrl,
+      },
+    });
+
+    if (org.experience) {
+      await prisma.workExperience.deleteMany({
+        where: { organizationId: record.id },
+      });
+      await prisma.workExperience.create({
+        data: {
+          title: org.experience.title,
+          type: org.experience.type,
+          startDate: new Date(org.experience.startDate),
+          endDate: org.experience.endDate
+            ? new Date(org.experience.endDate)
+            : undefined,
+          highlights: org.experience.highlights ?? [],
+          position: org.experience.position ?? 0,
+          organizationId: record.id,
+        },
+      });
+    }
+  }
+
+  await prisma.accolade.deleteMany({});
+  for (const accolade of raw.accolades) {
+    await prisma.accolade.create({
+      data: {
+        title: accolade.title,
+        issuer: accolade.issuer,
+        type: accolade.type,
+        date: accolade.date ? new Date(accolade.date) : undefined,
+        url: accolade.url,
+        description: accolade.description,
+        position: accolade.position ?? 0,
+      },
+    });
+  }
+
+  console.log(
+    `  ${raw.organizations.length} organizations + experience, ${raw.accolades.length} accolades seeded.`,
+  );
+}
+
 async function seedTimeline() {
   console.log('Seeding timeline...');
 
   const timelinePath = join(contentDir, 'pages', 'timeline.json');
   const entries = JSON.parse(readFileSync(timelinePath, 'utf-8'));
 
+  // The timeline is fully file-owned: wipe and recreate so renamed or
+  // removed entries never linger in the DB.
+  await prisma.timelineEntry.deleteMany({});
+
   let count = 0;
   for (let i = 0; i < entries.length; i++) {
     const entry = entries[i];
 
-    await prisma.timelineEntry.upsert({
-      where: {
-        year_title: {
-          year: entry.year,
-          title: entry.title,
-        },
-      },
-      update: {
-        description: entry.description,
-        position: i,
-      },
-      create: {
+    await prisma.timelineEntry.create({
+      data: {
         year: entry.year,
         title: entry.title,
         description: entry.description,
@@ -254,8 +387,10 @@ async function main() {
 
   await seedProfile();
   await seedProjects();
+  await cleanupRemovedProjects();
   await seedStack();
   await seedTimeline();
+  await seedCareer();
 
   console.log('\nContent seed complete!');
 }

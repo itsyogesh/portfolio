@@ -26,8 +26,11 @@ export async function POST(request: NextRequest) {
       data: {
         name: body.name,
         description: body.description || null,
+        iconSlug: body.iconSlug || null,
         logoUrl: body.logoUrl || null,
         url: body.url || null,
+        level: body.level || null,
+        keywords: body.keywords || [],
         position: (maxPosition._max.position ?? -1) + 1,
         categoryId: body.categoryId,
       },

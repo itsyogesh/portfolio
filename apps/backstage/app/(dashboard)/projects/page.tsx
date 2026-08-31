@@ -13,9 +13,16 @@ export const metadata: Metadata = {
 export default async function ProjectsPage() {
   await requireAdminPage();
 
-  const projects = await database.project.findMany({
-    orderBy: { position: 'asc' },
-  });
+  const [projects, organizations] = await Promise.all([
+    database.project.findMany({
+      orderBy: { position: 'asc' },
+      include: { organization: true },
+    }),
+    database.organization.findMany({
+      orderBy: { name: 'asc' },
+      select: { id: true, name: true },
+    }),
+  ]);
 
   const serializedProjects = projects.map((p) => ({
     id: p.id,
@@ -33,6 +40,13 @@ export default async function ProjectsPage() {
     position: p.position,
     startDate: p.startDate?.toISOString().split('T')[0] ?? null,
     endDate: p.endDate?.toISOString().split('T')[0] ?? null,
+    kind: p.kind,
+    role: p.role,
+    highlights: p.highlights,
+    organizationId: p.organizationId,
+    organization: p.organization
+      ? { id: p.organization.id, name: p.organization.name }
+      : null,
   }));
 
   return (
@@ -44,7 +58,7 @@ export default async function ProjectsPage() {
         </p>
       </div>
 
-      <ProjectTable projects={serializedProjects} />
+      <ProjectTable projects={serializedProjects} organizations={organizations} />
     </div>
   );
 }

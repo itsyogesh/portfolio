@@ -178,18 +178,16 @@ async function main() {
   const filtered = bookmarks.filter((b) => !b.dead);
   const removed = bookmarks.length - filtered.length;
 
-  console.log(`\nResults:`);
+  console.log('\nResults:');
   console.log(`  Alive: ${progress.alive}`);
   console.log(`  Replaced with archive.org: ${progress.archived}`);
   console.log(`  Removed (dead, no archive): ${removed}`);
   console.log(`  Final count: ${filtered.length}`);
 
-  // Clean up temp fields
-  for (const b of filtered) {
-    delete b.dead;
-  }
+  // Clean up temp fields without mutating the source objects.
+  const cleaned = filtered.map(({ dead: _dead, ...bookmark }) => bookmark);
 
-  writeFileSync(bookmarksPath, JSON.stringify(filtered, null, 2));
+  writeFileSync(bookmarksPath, JSON.stringify(cleaned, null, 2));
   console.log(`\nWritten to ${bookmarksPath}`);
 }
 

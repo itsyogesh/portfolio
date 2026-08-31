@@ -7,7 +7,9 @@
     "dev": "turbo dev --filter=web --filter=backstage",
     "dev:web": "turbo dev --filter=web",
     "dev:backstage": "turbo dev --filter=backstage",
-    "lint": "biome check .",
+    "lint": "biome lint .",
+    "typecheck": "turbo typecheck --filter=web --filter=backstage --filter=@packages/*",
+    "format:check": "biome format .",
     "format": "biome format --write .",
     "clean": "git clean -xdf node_modules",
     "bump-ui": "npx shadcn@latest add --all --overwrite -c packages/base",
@@ -18,15 +20,18 @@
     "seed:content": "tsx scripts/seed-content.ts",
     "stars:sync": "tsx scripts/sync-github-stars.ts",
     "db:push": "cd packages/db && pnpm db:push",
+    "db:migrate": "cd packages/db && pnpm db:migrate",
+    "db:migrate:deploy": "cd packages/db && pnpm db:migrate:deploy",
+    "db:migrate:status": "cd packages/db && pnpm db:migrate:status",
     "db:studio": "cd packages/db && pnpm db:studio"
   },
   "devDependencies": {
-    "@ai-sdk/openai": "^1.3.22",
+    "@ai-sdk/openai": "^4.0.36",
     "@biomejs/biome": "1.9.4",
     "@extractus/article-extractor": "^8.0.0",
     "@neondatabase/serverless": "^1.0.2",
-    "@prisma/adapter-neon": "7.1.0",
-    "@prisma/client": "7.1.0",
+    "@prisma/adapter-neon": "7.9.1",
+    "@prisma/client": "7.9.1",
     "@tooling/typescript-config": "workspace:*",
     "@types/node": "^24.10.1",
     "@types/ws": "^8.18.1",
@@ -35,11 +40,18 @@
     "tsx": "^4.21.0",
     "turbo": "^2.6.3",
     "typescript": "^5.9.3",
-    "ws": "^8.18.3"
+    "ws": "^8.21.3"
   },
   "engines": {
     "node": ">=20.9"
   },
   "packageManager": "pnpm@10.11.0",
+  "pnpm": {
+    "overrides": {
+      "js-yaml@3.14.2": "3.15.1",
+      "sanitize-html@2.17.0": "2.17.6",
+      "yaml@2.8.2": "2.8.3"
+    }
+  },
   "type": "module"
 }

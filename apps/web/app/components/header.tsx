@@ -10,8 +10,6 @@ const navigation = [
   { name: 'About', href: '/about' },
   { name: 'Projects', href: '/projects' },
   { name: 'Writing', href: '/writing' },
-  { name: 'Bookmarks', href: '/bookmarks' },
-  { name: 'Stack', href: '/stack' },
 ];
 
 export const Header = ({ profileName }: { profileName: string }) => {
@@ -25,7 +23,7 @@ export const Header = ({ profileName }: { profileName: string }) => {
           href="/"
           className="text-sm font-semibold tracking-tight text-foreground hover:text-foreground/80 transition-colors"
         >
-          {profileName.toLowerCase()}
+          {profileName}
         </Link>
 
         <nav className="flex items-center gap-1">

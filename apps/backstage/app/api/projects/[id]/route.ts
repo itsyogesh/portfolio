@@ -10,7 +10,10 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
   const { error } = await requireAdmin();
   if (error) return error;
 
-  const project = await database.project.findUnique({ where: { id } });
+  const project = await database.project.findUnique({
+    where: { id },
+    include: { organization: true },
+  });
 
   if (!project) {
     return NextResponse.json({ error: 'Not found' }, { status: 404 });
@@ -52,6 +55,12 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         }),
         ...(body.endDate !== undefined && {
           endDate: body.endDate ? new Date(body.endDate) : null,
+        }),
+        ...(body.kind !== undefined && { kind: body.kind || null }),
+        ...(body.role !== undefined && { role: body.role || null }),
+        ...(body.highlights !== undefined && { highlights: body.highlights }),
+        ...(body.organizationId !== undefined && {
+          organizationId: body.organizationId || null,
         }),
       },
     });

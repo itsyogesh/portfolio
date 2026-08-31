@@ -1,0 +1,20 @@
+{
+  "name": "@packages/calendar",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "clean": "rm -rf node_modules .turbo",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "dependencies": {
+    "@packages/db": "workspace:*",
+    "server-only": "^0.0.1"
+  },
+  "devDependencies": {
+    "@tooling/typescript-config": "workspace:*",
+    "@types/node": "^24.10.1",
+    "typescript": "^5.9.3"
+  }
+}
