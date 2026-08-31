@@ -23,6 +23,8 @@ const statusLabel: Record<string, string> = {
 const categoryLabel: Record<string, string> = {
   company: 'Company',
   venture: 'Venture',
+  tool: 'Tool',
+  ai: 'AI',
   saas: 'SaaS',
   web3: 'Web3',
   agency: 'Agency',
