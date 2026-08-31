@@ -31,6 +31,13 @@ export default async function Image() {
     ? `data:image/jpeg;base64,${avatar.toString('base64')}`
     : null;
 
+  // Split a trailing "— …" clause onto its own subline (e.g. "— from
+  // Delhi, since 2013."), which sits on the same row as the URL pill.
+  const dashIndex = headline.lastIndexOf('—');
+  const mainLine =
+    dashIndex > 0 ? headline.slice(0, dashIndex).trim() : headline;
+  const subLine = dashIndex > 0 ? headline.slice(dashIndex).trim() : null;
+
   return new ImageResponse(
     (
       <div
@@ -80,24 +87,55 @@ export default async function Image() {
             maxWidth: 660,
           }}
         >
-          {headline}
+          {mainLine}
         </span>
         <div
           style={{
             position: 'absolute',
+            left: 96,
             right: 64,
             bottom: 56,
             display: 'flex',
             alignItems: 'center',
-            padding: '12px 24px',
-            borderRadius: 999,
-            border: '1px solid rgba(237,237,237,0.14)',
-            background: 'rgba(255,255,255,0.04)',
-            fontSize: 19,
-            color: '#a8a29e',
+            justifyContent: 'space-between',
           }}
         >
-          {website}
+          <span
+            style={{
+              fontSize: 21,
+              color: '#78716c',
+              display: 'flex',
+            }}
+          >
+            {subLine ?? ''}
+          </span>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              padding: '12px 24px',
+              borderRadius: 999,
+              border: '1px solid rgba(237,237,237,0.14)',
+              background: 'rgba(255,255,255,0.04)',
+              fontSize: 19,
+              color: '#a8a29e',
+            }}
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#a8a29e"
+              strokeWidth="1.6"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <path d="M2 12h20" />
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+            </svg>
+            {website}
+          </div>
         </div>
       </div>
     ),
