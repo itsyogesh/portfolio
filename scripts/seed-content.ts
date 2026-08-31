@@ -270,6 +270,24 @@ async function seedCareer() {
     }>;
   };
 
+  // Remove organizations (and their experience) no longer in the file.
+  const keepSlugs = raw.organizations.map((o) => o.slug);
+  const staleOrgs = await prisma.organization.findMany({
+    where: { slug: { notIn: keepSlugs } },
+    select: { id: true, slug: true },
+  });
+  if (staleOrgs.length > 0) {
+    await prisma.workExperience.deleteMany({
+      where: { organizationId: { in: staleOrgs.map((o) => o.id) } },
+    });
+    await prisma.organization.deleteMany({
+      where: { id: { in: staleOrgs.map((o) => o.id) } },
+    });
+    console.log(
+      `  Removed ${staleOrgs.length} org(s): ${staleOrgs.map((o) => o.slug).join(', ')}`,
+    );
+  }
+
   for (const org of raw.organizations) {
     const record = await prisma.organization.upsert({
       where: { slug: org.slug },
@@ -340,22 +358,16 @@ async function seedTimeline() {
   const timelinePath = join(contentDir, 'pages', 'timeline.json');
   const entries = JSON.parse(readFileSync(timelinePath, 'utf-8'));
 
+  // The timeline is fully file-owned: wipe and recreate so renamed or
+  // removed entries never linger in the DB.
+  await prisma.timelineEntry.deleteMany({});
+
   let count = 0;
   for (let i = 0; i < entries.length; i++) {
     const entry = entries[i];
 
-    await prisma.timelineEntry.upsert({
-      where: {
-        year_title: {
-          year: entry.year,
-          title: entry.title,
-        },
-      },
-      update: {
-        description: entry.description,
-        position: i,
-      },
-      create: {
+    await prisma.timelineEntry.create({
+      data: {
         year: entry.year,
         title: entry.title,
         description: entry.description,

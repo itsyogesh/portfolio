@@ -49,7 +49,7 @@
       "industry": "Fintech",
       "description": "US consumer fintech offering early-salary micro-loans; founded by the Pei team.",
       "experience": {
-        "title": "Engineer (part-time contract)",
+        "title": "Founding Engineer (part-time contract)",
         "type": "contract",
         "startDate": "2023-01-01",
         "highlights": [
@@ -87,7 +87,7 @@
       "industry": "Fintech",
       "description": "US cashback and rewards fintech.",
       "experience": {
-        "title": "Full-stack Engineer",
+        "title": "Founding Engineer",
         "type": "contract",
         "startDate": "2018-02-01",
         "endDate": "2021-12-31",
@@ -98,24 +98,6 @@
         "position": 4
       },
       "logoUrl": "/logos/pei.png"
-    },
-    {
-      "slug": "independent",
-      "name": "Independent",
-      "type": "practice",
-      "industry": "Contract engineering",
-      "description": "Solo contract practice across Web3 and mobile.",
-      "experience": {
-        "title": "Contract Engineer",
-        "type": "contract",
-        "startDate": "2016-08-01",
-        "endDate": "2019-01-01",
-        "highlights": [
-          "Client work across Web3 and mobile: Busy.org's Steem commenting system, a Komodo wallet on Zcash's zero-knowledge stack, Ryze's card-trading apps, and Alphasheets",
-          "Later placements through Turtle and G2i — AiFi, Millions, and more"
-        ],
-        "position": 5
-      }
     },
     {
       "slug": "paytm",
@@ -132,7 +114,7 @@
           "Seller dashboard backend for the e-commerce marketplace",
           "Growth engineering: multi-platform deep-linking service and price-comparison engine"
         ],
-        "position": 6
+        "position": 5
       },
       "logoUrl": "/logos/paytm.png"
     },
@@ -150,9 +132,118 @@
         "highlights": [
           "First engineering job — backend APIs and the first Android app"
         ],
-        "position": 7
+        "position": 6
       },
       "logoUrl": "/logos/squadrun.png"
+    },
+    {
+      "slug": "alphasheets",
+      "name": "Alphasheets",
+      "type": "client",
+      "industry": "Fintech tooling",
+      "description": "Collaborative spreadsheet for finance teams, built with a team out of MIT.",
+      "experience": {
+        "title": "Frontend Engineer",
+        "type": "freelance",
+        "startDate": "2016-11-01",
+        "endDate": "2017-02-28",
+        "highlights": [
+          "First independent contract — the spreadsheet grid and formula UI in React and Flux"
+        ],
+        "position": 7
+      }
+    },
+    {
+      "slug": "busy-org",
+      "name": "Busy.org",
+      "type": "client",
+      "industry": "Web3 social",
+      "description": "Open-source social network on the Steem blockchain.",
+      "logoUrl": "/logos/freelance/busy-org.png",
+      "experience": {
+        "title": "Blockchain Engineer",
+        "type": "freelance",
+        "startDate": "2017-05-01",
+        "endDate": "2017-07-31",
+        "highlights": [
+          "Built the commenting system on Steem — paid in Steem tokens"
+        ],
+        "position": 8
+      }
+    },
+    {
+      "slug": "komodo-wallet",
+      "name": "Komodo wallet",
+      "type": "client",
+      "industry": "Web3",
+      "description": "Client project on the Komodo blockchain.",
+      "logoUrl": "/logos/freelance/komodo.png",
+      "experience": {
+        "title": "Wallet Engineer",
+        "type": "freelance",
+        "startDate": "2017-06-01",
+        "endDate": "2017-08-31",
+        "highlights": [
+          "A wallet over Komodo's Zcash-derived zero-knowledge stack"
+        ],
+        "position": 9
+      }
+    },
+    {
+      "slug": "epics",
+      "name": "Ryze / Epics",
+      "type": "client",
+      "industry": "Digital collectibles",
+      "website": "https://kolex.gg",
+      "description": "Digital card-trading platform, now Kolex.",
+      "logoUrl": "/logos/freelance/epics.png",
+      "experience": {
+        "title": "Mobile Engineer",
+        "type": "freelance",
+        "startDate": "2017-08-01",
+        "endDate": "2018-01-31",
+        "highlights": [
+          "Card-trading apps in React Native"
+        ],
+        "position": 10
+      }
+    },
+    {
+      "slug": "aifi",
+      "name": "AiFi",
+      "type": "client",
+      "industry": "Autonomous retail",
+      "website": "https://aifi.com",
+      "description": "Computer-vision checkout for autonomous stores.",
+      "logoUrl": "/logos/freelance/aifi.png",
+      "experience": {
+        "title": "Mobile Engineer",
+        "type": "freelance",
+        "startDate": "2018-12-01",
+        "endDate": "2019-04-30",
+        "highlights": [
+          "React Native barcode scanning for cashierless stores, placed through Turtle"
+        ],
+        "position": 11
+      }
+    },
+    {
+      "slug": "millions",
+      "name": "Millions",
+      "type": "client",
+      "industry": "Consumer",
+      "description": "Consumer iOS and Android apps.",
+      "logoUrl": "/logos/freelance/millions.png",
+      "experience": {
+        "title": "Mobile Engineer",
+        "type": "freelance",
+        "startDate": "2019-06-01",
+        "endDate": "2021-06-30",
+        "highlights": [
+          "Two years of iOS and Android builds with complex animation work"
+        ],
+        "position": 12
+      }
     }
   ],
   "accolades": [

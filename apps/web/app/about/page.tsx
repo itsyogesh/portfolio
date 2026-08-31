@@ -41,7 +41,15 @@ const AboutPage = async () => {
 
   const companies = nowProjects.filter((p) => p.category === 'company');
   const projects = nowProjects.filter((p) => p.category !== 'company');
+  const employment = experience.filter((r) => r.type !== 'freelance');
+  const freelance = experience.filter((r) => r.type === 'freelance');
   const formatYear = (d: Date) => new Date(d).getFullYear();
+  const formatRange = (start: Date, end: Date | null) => {
+    const from = formatYear(start);
+    const to = end ? formatYear(end) : null;
+    if (to === null) return `${from}–now`;
+    return to === from ? `${from}` : `${from}–${to}`;
+  };
 
   const jsonLd: WithContext<ProfilePage> = {
     '@context': 'https://schema.org',
@@ -147,56 +155,60 @@ const AboutPage = async () => {
       </section>
 
       {/* Experience */}
-      {experience.length > 0 && (
-        <section className="mb-20">
-          <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-6">
-            Experience
-          </h2>
-          <div className="space-y-1">
-            {experience.map((role) => (
-              <div
-                key={role.id}
-                className="flex items-start justify-between gap-6 py-4 border-b border-border/50"
-              >
-                <div className="flex min-w-0 items-start gap-3.5">
-                  {role.organization.logoUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={role.organization.logoUrl}
-                      alt=""
-                      className="mt-0.5 h-6 w-6 shrink-0 rounded-md object-contain"
-                    />
-                  ) : (
-                    <span
-                      aria-hidden="true"
-                      className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-muted text-[11px] font-semibold text-muted-foreground"
-                    >
-                      {role.organization.name.charAt(0)}
-                    </span>
-                  )}
-                  <div className="min-w-0 space-y-1">
-                  <h3 className="font-medium text-foreground">
-                    {role.title} ·{' '}
-                    <span className="text-muted-foreground font-normal">
-                      {role.organization.name}
-                    </span>
-                  </h3>
-                  {role.highlights[0] ? (
-                    <p className="text-sm text-muted-foreground line-clamp-1">
-                      {role.highlights[0]}
-                    </p>
-                  ) : null}
+      {[
+        { heading: 'Experience', roles: employment },
+        { heading: 'Freelance', roles: freelance },
+      ]
+        .filter((group) => group.roles.length > 0)
+        .map((group) => (
+          <section key={group.heading} className="mb-20">
+            <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-6">
+              {group.heading}
+            </h2>
+            <div className="space-y-1">
+              {group.roles.map((role) => (
+                <div
+                  key={role.id}
+                  className="flex items-start justify-between gap-6 py-4 border-b border-border/50"
+                >
+                  <div className="flex min-w-0 items-start gap-3.5">
+                    {role.organization.logoUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={role.organization.logoUrl}
+                        alt=""
+                        className="mt-0.5 h-6 w-6 shrink-0 rounded-md object-contain"
+                      />
+                    ) : (
+                      <span
+                        aria-hidden="true"
+                        className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-muted text-[11px] font-semibold text-muted-foreground"
+                      >
+                        {role.organization.name.charAt(0)}
+                      </span>
+                    )}
+                    <div className="min-w-0 space-y-1">
+                      <h3 className="font-medium text-foreground">
+                        {role.title} ·{' '}
+                        <span className="text-muted-foreground font-normal">
+                          {role.organization.name}
+                        </span>
+                      </h3>
+                      {role.highlights[0] ? (
+                        <p className="text-sm text-muted-foreground line-clamp-1">
+                          {role.highlights[0]}
+                        </p>
+                      ) : null}
+                    </div>
                   </div>
+                  <span className="text-xs text-muted-foreground/70 tabular-nums shrink-0 pt-0.5">
+                    {formatRange(role.startDate, role.endDate)}
+                  </span>
                 </div>
-                <span className="text-xs text-muted-foreground/70 tabular-nums shrink-0 pt-0.5">
-                  {formatYear(role.startDate)}–
-                  {role.endDate ? formatYear(role.endDate) : 'now'}
-                </span>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
+              ))}
+            </div>
+          </section>
+        ))}
 
       {/* Recognition */}
       {accolades.length > 0 && (

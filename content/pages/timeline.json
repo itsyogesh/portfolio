@@ -2,27 +2,27 @@
   {
     "year": "2013",
     "title": "SquadRun · Unstudious",
-    "description": "Founding engineer at SquadRun — built the first backend APIs and Android app. Founded Unstudious, an EdTech startup covered by Tracxn and approached by Matrix Partners."
+    "description": "Founding engineer at SquadRun. Founded Unstudious, an EdTech startup that drew Matrix Partners' attention."
   },
   {
     "year": "2014",
     "title": "Paytm",
-    "description": "Joined the seller platform team during the marketplace build-out. Promoted to growth engineering: the deep-linking service and price-comparison engine."
+    "description": "Seller platform during the marketplace build-out, then growth engineering."
   },
   {
     "year": "2016",
     "title": "Independent",
-    "description": "Left Paytm to work directly with product teams in the US and Europe across React, React Native, and early blockchain systems."
+    "description": "Left Paytm to contract with product teams across the US and Europe."
   },
   {
     "year": "2017",
     "title": "First blockchain work",
-    "description": "Built Busy.org's commenting system on Steem, a Komodo wallet over Zcash's zero-knowledge stack, and Ryze's card-trading apps."
+    "description": "Busy.org's commenting system on Steem, a Komodo wallet, Ryze's card-trading apps."
   },
   {
     "year": "2018",
     "title": "Pei · Bitcharge",
-    "description": "Started four years as the engineer behind Pei's consumer fintech apps. Shipped Bitcharge v1; 195 businesses used it to accept crypto payments."
+    "description": "Began four years building Pei's consumer fintech apps. Shipped Bitcharge v1 to 195 businesses."
   },
   {
     "year": "2019",
@@ -32,17 +32,17 @@
   {
     "year": "2021",
     "title": "Polkadot",
-    "description": "First Kusama treasury grants — the move from general blockchain work to Polkadot developer tooling."
+    "description": "First Kusama treasury grants — the move into Polkadot developer tooling."
   },
   {
     "year": "2022",
     "title": "Flex",
-    "description": "Moved with Pei's team through the acquisition. Left at the end of the year to build companies full-time."
+    "description": "Followed Pei's acquisition to Flex, then left to build companies full-time."
   },
   {
     "year": "2023",
     "title": "Charge23 Labs",
-    "description": "Incorporated with Evisha Soni to build Chargespot. DPIIT-recognised, incubated at AIC Sangam."
+    "description": "Incorporated with Evisha Soni to build Chargespot — DPIIT-recognised, incubated at AIC Sangam."
   },
   {
     "year": "2024",
@@ -52,11 +52,11 @@
   {
     "year": "2025",
     "title": "AI-native development",
-    "description": "Rebuilt the entire workflow around AI agents. Domain Collective launched; Merry Magic Mail shipped on Product Hunt."
+    "description": "Rebuilt the workflow around AI agents. Domain Collective and Merry Magic Mail shipped."
   },
   {
     "year": "2026",
     "title": "Relaycode M2 · Droidsize relaunch",
-    "description": "Delivered Relaycode's second grant milestone. Relaunched droidsize.com and rebuilt this site."
+    "description": "Delivered Relaycode's second grant milestone. Relaunched droidsize.com and this site."
   }
 ]
