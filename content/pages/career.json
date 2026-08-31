@@ -261,7 +261,17 @@
       "issuer": "Startup India (DPIIT)",
       "type": "grant",
       "description": "Seed funding under the Startup India Seed Fund Scheme for Chargespot.",
-      "position": 1
+      "position": 1,
+      "date": "2024-06-01"
+    },
+    {
+      "title": "Polkadot Solidity Hackathon — 1st place, EVM track",
+      "issuer": "OpenGuild × Web3 Foundation",
+      "type": "award",
+      "date": "2026-03-31",
+      "url": "https://relaycode.org/studio",
+      "description": "Relaycode Studio — a smart contract IDE for Polkadot Hub, built in two nights and shipped live.",
+      "position": 2
     },
     {
       "title": "Polkadot Prodigy — Winner, AI×Web3 ($6,000)",
@@ -270,7 +280,7 @@
       "date": "2025-06-01",
       "url": "https://wisesama.com",
       "description": "Won with Wisesama, a scam-defense platform for the Polkadot ecosystem.",
-      "position": 2
+      "position": 3
     },
     {
       "title": "CTRL Hack ZK — 2nd place ($2,300)",
@@ -278,7 +288,7 @@
       "type": "hackathon",
       "date": "2024-05-01",
       "description": "Mysign.id — verified digital signatures powered by Web3.",
-      "position": 3
+      "position": 4
     },
     {
       "title": "Intel Perceptual Computing Challenge — 2nd worldwide",
@@ -286,21 +296,21 @@
       "type": "hackathon",
       "date": "2013-06-01",
       "description": "Second place in Intel's worldwide perceptual computing contest.",
-      "position": 4
+      "position": 5
     },
     {
       "title": "BlackBerry Jam Hack — 1st place",
       "issuer": "BlackBerry India",
       "type": "hackathon",
       "date": "2013-03-01",
-      "position": 5
+      "position": 6
     },
     {
       "title": "Tizen App Challenge — 1st place",
       "issuer": "Samsung",
       "type": "hackathon",
       "date": "2013-09-01",
-      "position": 6
+      "position": 7
     }
   ]
 }
