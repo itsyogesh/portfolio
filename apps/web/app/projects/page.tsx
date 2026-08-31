@@ -36,26 +36,36 @@ const ProjectsPage = async () => {
     include: { organization: { select: { name: true } } },
   });
 
-  const grouped = statusOrder
-    .map((status) => ({
+  const companies = allProjects.filter((p) => p.category === 'company');
+  const ventures = allProjects.filter((p) => p.category === 'venture');
+  const rest = allProjects.filter(
+    (p) => p.category !== 'company' && p.category !== 'venture',
+  );
+
+  const grouped = [
+    { status: 'companies', label: 'Companies', projects: companies },
+    ...statusOrder.map((status) => ({
       status,
-      projects: allProjects.filter((p) => p.status === status),
-    }))
-    .filter((g) => g.projects.length > 0);
+      label: statusLabel[status],
+      projects: rest.filter((p) => p.status === status),
+    })),
+    { status: 'ventures', label: 'Earlier ventures', projects: ventures },
+  ].filter((g) => g.projects.length > 0);
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-16 space-y-16">
       <section className="space-y-4">
-        <h1 className="font-display text-3xl tracking-tight">Projects</h1>
+        <h1 className="font-display text-3xl tracking-tight">Work</h1>
         <p className="text-muted-foreground">
-          Things I've built, am building, or have thought about building.
+          The companies I run, the projects I keep building, and the ventures
+          that taught me how.
         </p>
       </section>
 
       {grouped.map((group) => (
         <section key={group.status} className="space-y-4">
           <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-            {statusLabel[group.status]}
+            {group.label}
           </h2>
           <div className="space-y-1">
             {group.projects.map((project) => (

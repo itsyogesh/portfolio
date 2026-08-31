@@ -1,4 +1,3 @@
-import { Timeline } from '@packages/base/components/ui/timeline';
 import { database } from '@packages/db';
 import { JsonLd, type WithContext, type ProfilePage } from '@packages/seo/json-ld';
 import { ArrowUpRight } from 'lucide-react';
@@ -20,7 +19,7 @@ export const generateMetadata = async (): Promise<Metadata> => {
 };
 
 const AboutPage = async () => {
-  const [profile, timeline, nowProjects, orgs, education, stackItems] =
+  const [profile, timeline, nowProjects, experience, accolades, orgs, education, stackItems] =
     await Promise.all([
       getProfile(),
       database.timelineEntry.findMany({
@@ -29,12 +28,20 @@ const AboutPage = async () => {
       database.project.findMany({
         where: { featured: true },
         orderBy: { position: 'asc' },
-        take: 4,
       }),
+      database.workExperience.findMany({
+        orderBy: { position: 'asc' },
+        include: { organization: true },
+      }),
+      database.accolade.findMany({ orderBy: { position: 'asc' } }),
       database.organization.findMany({ select: { name: true, website: true } }),
       database.education.findMany({ select: { institution: true } }),
       database.stackItem.findMany({ select: { name: true } }),
     ]);
+
+  const companies = nowProjects.filter((p) => p.category === 'company');
+  const projects = nowProjects.filter((p) => p.category !== 'company');
+  const formatYear = (d: Date) => new Date(d).getFullYear();
 
   const jsonLd: WithContext<ProfilePage> = {
     '@context': 'https://schema.org',
@@ -76,33 +83,42 @@ const AboutPage = async () => {
         </p>
       </section>
 
-      {/* Now — the three tracks */}
+      {/* Now — companies and projects */}
       {nowProjects.length > 0 && (
-        <section className="mb-20">
-          <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-6">
-            Now
-          </h2>
-          <div className="space-y-1">
-            {nowProjects.map((project) => (
-              <Link
-                key={project.slug}
-                href={`/projects/${project.slug}`}
-                className="group flex items-baseline justify-between gap-6 py-4 border-b border-border/50 hover:border-border transition-colors"
-              >
-                <div className="min-w-0 space-y-1">
-                  <h3 className="font-medium text-foreground">
-                    {project.title}
-                  </h3>
-                  {project.summary ? (
-                    <p className="text-sm text-muted-foreground line-clamp-1">
-                      {project.summary}
-                    </p>
-                  ) : null}
+        <section className="mb-20 space-y-10">
+          {[
+            { label: 'Companies', items: companies },
+            { label: 'Projects', items: projects },
+          ]
+            .filter((group) => group.items.length > 0)
+            .map((group) => (
+              <div key={group.label}>
+                <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-4">
+                  {group.label}
+                </h2>
+                <div className="space-y-1">
+                  {group.items.map((project) => (
+                    <Link
+                      key={project.slug}
+                      href={`/projects/${project.slug}`}
+                      className="group flex items-baseline justify-between gap-6 py-4 border-b border-border/50 hover:border-border transition-colors"
+                    >
+                      <div className="min-w-0 space-y-1">
+                        <h3 className="font-medium text-foreground">
+                          {project.title}
+                        </h3>
+                        {project.summary ? (
+                          <p className="text-sm text-muted-foreground line-clamp-1">
+                            {project.summary}
+                          </p>
+                        ) : null}
+                      </div>
+                      <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                    </Link>
+                  ))}
                 </div>
-                <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
-              </Link>
+              </div>
             ))}
-          </div>
         </section>
       )}
 
@@ -120,22 +136,100 @@ const AboutPage = async () => {
         )}
       </section>
 
+      {/* Experience */}
+      {experience.length > 0 && (
+        <section className="mb-20">
+          <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-6">
+            Experience
+          </h2>
+          <div className="space-y-1">
+            {experience.map((role) => (
+              <div
+                key={role.id}
+                className="flex items-baseline justify-between gap-6 py-4 border-b border-border/50"
+              >
+                <div className="min-w-0 space-y-1">
+                  <h3 className="font-medium text-foreground">
+                    {role.title} ·{' '}
+                    <span className="text-muted-foreground font-normal">
+                      {role.organization.name}
+                    </span>
+                  </h3>
+                  {role.highlights[0] ? (
+                    <p className="text-sm text-muted-foreground line-clamp-1">
+                      {role.highlights[0]}
+                    </p>
+                  ) : null}
+                </div>
+                <span className="text-xs text-muted-foreground/70 tabular-nums shrink-0">
+                  {formatYear(role.startDate)}–
+                  {role.endDate ? formatYear(role.endDate) : 'now'}
+                </span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Recognition */}
+      {accolades.length > 0 && (
+        <section className="mb-20">
+          <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-6">
+            Recognition
+          </h2>
+          <div className="space-y-1">
+            {accolades.map((accolade) => (
+              <div
+                key={accolade.id}
+                className="flex items-baseline justify-between gap-6 py-4 border-b border-border/50"
+              >
+                <div className="min-w-0 space-y-1">
+                  <h3 className="font-medium text-foreground">
+                    {accolade.title}
+                  </h3>
+                  {accolade.issuer ? (
+                    <p className="text-sm text-muted-foreground">
+                      {accolade.issuer}
+                    </p>
+                  ) : null}
+                </div>
+                {accolade.date ? (
+                  <span className="text-xs text-muted-foreground/70 tabular-nums shrink-0">
+                    {formatYear(accolade.date)}
+                  </span>
+                ) : null}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* Milestones */}
       {timeline.length > 0 && (
         <section className="mb-20">
           <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-6">
             Milestones
           </h2>
-          <Timeline
-            data={timeline.map((item) => ({
-              title: `${item.year} — ${item.title}`,
-              content: item.description ? (
-                <p className="text-sm text-muted-foreground">
-                  {item.description}
-                </p>
-              ) : null,
-            }))}
-          />
+          <div className="space-y-1">
+            {timeline.map((item) => (
+              <div
+                key={`${item.year}-${item.title}`}
+                className="grid grid-cols-[3.5rem_1fr] gap-6 py-4 border-b border-border/50"
+              >
+                <span className="text-sm text-muted-foreground/70 tabular-nums pt-0.5">
+                  {item.year}
+                </span>
+                <div className="space-y-1">
+                  <h3 className="font-medium text-foreground">{item.title}</h3>
+                  {item.description ? (
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {item.description}
+                    </p>
+                  ) : null}
+                </div>
+              </div>
+            ))}
+          </div>
         </section>
       )}
 

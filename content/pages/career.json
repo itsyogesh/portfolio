@@ -1,0 +1,182 @@
+{
+  "organizations": [
+    {
+      "slug": "droidsize",
+      "name": "Droidsize Technologies",
+      "type": "company",
+      "website": "https://droidsize.com",
+      "location": "New Delhi, India",
+      "industry": "SaaS & AI products",
+      "description": "Product studio building SaaS, AI, and open-source products on shared operational rails.",
+      "experience": {
+        "title": "Founder",
+        "type": "founder",
+        "startDate": "2019-01-01",
+        "highlights": [
+          "Domain Collective live at collective.domains; Sparkles, TripleWave, Cadenza, and CopyCanvas in active development",
+          "Open-source: RepoPress (Git-native CMS) and Turbocamp (SaaS starter)",
+          "Relaunched droidsize.com in 2026 — designed and built end-to-end with AI agents in the loop"
+        ],
+        "position": 0
+      }
+    },
+    {
+      "slug": "charge23-labs",
+      "name": "Charge23 Labs",
+      "type": "company",
+      "website": "https://chargespot.app",
+      "location": "New Delhi, India",
+      "industry": "EV charging",
+      "description": "EV charging infrastructure for India — Chargespot app, OCPP/OCPI station platform.",
+      "experience": {
+        "title": "Co-founder",
+        "type": "founder",
+        "startDate": "2023-08-28",
+        "highlights": [
+          "DPIIT-recognised startup, incubated at AIC Sangam",
+          "OCPP/OCPI (v2.0–2.2.1) charging platform: Flutter app, Django + Go backend, Terraform on AWS",
+          "Co-founded with Evisha Soni"
+        ],
+        "position": 1
+      }
+    },
+    {
+      "slug": "stream",
+      "name": "Stream",
+      "type": "company",
+      "industry": "Fintech",
+      "description": "US consumer fintech offering early-salary micro-loans; founded by the Pei team.",
+      "experience": {
+        "title": "Engineer (part-time contract)",
+        "type": "contract",
+        "startDate": "2023-01-01",
+        "highlights": [
+          "Long-running contract with the founders I worked with at Pei",
+          "React Native and backend across the lending product"
+        ],
+        "position": 2
+      }
+    },
+    {
+      "slug": "flex",
+      "name": "Flex",
+      "type": "company",
+      "industry": "Fintech",
+      "description": "Flexible rent payments platform.",
+      "experience": {
+        "title": "Senior Software Engineer",
+        "type": "fulltime",
+        "startDate": "2022-02-01",
+        "endDate": "2022-10-31",
+        "highlights": [
+          "Joined through Pei's acquihire",
+          "Built the Flex JS SDK, a custom user-matching system, and internal dashboards"
+        ],
+        "position": 3
+      }
+    },
+    {
+      "slug": "pei",
+      "name": "Pei",
+      "type": "company",
+      "industry": "Fintech",
+      "description": "US cashback and rewards fintech.",
+      "experience": {
+        "title": "Full-stack Engineer",
+        "type": "contract",
+        "startDate": "2018-02-01",
+        "endDate": "2021-12-31",
+        "highlights": [
+          "Four years building the iOS and Android apps (React Native) and backend APIs",
+          "Team acquihired by Flex in late 2021"
+        ],
+        "position": 4
+      }
+    },
+    {
+      "slug": "paytm",
+      "name": "Paytm",
+      "type": "company",
+      "industry": "Fintech",
+      "description": "India's largest payments company.",
+      "experience": {
+        "title": "Software Engineer → Growth Engineer",
+        "type": "fulltime",
+        "startDate": "2014-10-01",
+        "endDate": "2016-08-31",
+        "highlights": [
+          "Seller dashboard backend for the e-commerce marketplace",
+          "Growth engineering: multi-platform deep-linking service and price-comparison engine"
+        ],
+        "position": 5
+      }
+    },
+    {
+      "slug": "squadrun",
+      "name": "SquadRun",
+      "type": "company",
+      "industry": "AI / operations",
+      "description": "Early-stage startup, now SquadStack.",
+      "experience": {
+        "title": "Founding Engineer",
+        "type": "fulltime",
+        "startDate": "2013-11-01",
+        "endDate": "2014-04-30",
+        "highlights": [
+          "First engineering job — backend APIs and the first Android app"
+        ],
+        "position": 6
+      }
+    }
+  ],
+  "accolades": [
+    {
+      "title": "Web3 Foundation Grant — Relaycode",
+      "issuer": "Web3 Foundation",
+      "type": "grant",
+      "date": "2024-10-09",
+      "url": "https://relaycode.org",
+      "description": "Grant for an improved Polkadot extrinsics builder. Milestone 2 (type-aware components, wallet integration, production UX) delivered February 2026.",
+      "position": 0
+    },
+    {
+      "title": "Polkadot Prodigy — Winner, AI×Web3 ($6,000)",
+      "issuer": "Polkadot Prodigy hackathon",
+      "type": "hackathon",
+      "date": "2025-06-01",
+      "url": "https://wisesama.com",
+      "description": "Won with Wisesama, a scam-defense platform for the Polkadot ecosystem.",
+      "position": 1
+    },
+    {
+      "title": "CTRL Hack ZK — 2nd place ($2,300)",
+      "issuer": "Aleph Zero",
+      "type": "hackathon",
+      "date": "2024-05-01",
+      "description": "Mysign.id — verified digital signatures powered by Web3.",
+      "position": 2
+    },
+    {
+      "title": "Intel Perceptual Computing Challenge — 2nd worldwide",
+      "issuer": "Intel",
+      "type": "hackathon",
+      "date": "2013-06-01",
+      "description": "Second place in Intel's worldwide perceptual computing contest.",
+      "position": 3
+    },
+    {
+      "title": "BlackBerry Jam Hack — 1st place",
+      "issuer": "BlackBerry India",
+      "type": "hackathon",
+      "date": "2013-03-01",
+      "position": 4
+    },
+    {
+      "title": "Tizen App Challenge — 1st place",
+      "issuer": "Samsung",
+      "type": "hackathon",
+      "date": "2013-09-01",
+      "position": 5
+    }
+  ]
+}

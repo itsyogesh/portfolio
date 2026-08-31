@@ -50,7 +50,7 @@ function parseFrontmatter(raw: string): { frontmatter: Record<string, unknown>; 
 async function seedProfile() {
   console.log('Seeding profile...');
 
-  const bio = `I dropped out of engineering college in 2013 because building things for real startups taught me more than lectures ever did. That decision set the pattern for everything since: learn by shipping.
+  const bio = `I've been building software products since 2013 — first inside other people's startups, now mostly through companies of my own. The pattern has never changed: learn by shipping.
 
 The early years were employment and contracts — Paytm (seller platform, then growth engineering), four years building a fintech app at Pei that Americans used every day, a stint at Flex after the acquihire. Before all of that there was Unstudious, my first venture, an EdTech idea good enough that Matrix Partners and Tracxn came asking. It didn't become a company, but it made me one.
 
@@ -215,6 +215,105 @@ async function seedStack() {
 
 // ─── Seed Timeline ───────────────────────────────────────────────────
 
+
+// ─── Seed Career (organizations, experience, accolades) ─────────────
+
+async function seedCareer() {
+  console.log('Seeding career...');
+
+  const raw = JSON.parse(
+    readFileSync(join(contentDir, 'pages', 'career.json'), 'utf-8'),
+  ) as {
+    organizations: Array<{
+      slug: string;
+      name: string;
+      type: string;
+      website?: string;
+      location?: string;
+      industry?: string;
+      description?: string;
+      experience?: {
+        title: string;
+        type: string;
+        startDate: string;
+        endDate?: string;
+        highlights?: string[];
+        position?: number;
+      };
+    }>;
+    accolades: Array<{
+      title: string;
+      issuer?: string;
+      type: string;
+      date?: string;
+      url?: string;
+      description?: string;
+      position?: number;
+    }>;
+  };
+
+  for (const org of raw.organizations) {
+    const record = await prisma.organization.upsert({
+      where: { slug: org.slug },
+      update: {
+        name: org.name,
+        type: org.type,
+        website: org.website,
+        location: org.location,
+        industry: org.industry,
+        description: org.description,
+      },
+      create: {
+        slug: org.slug,
+        name: org.name,
+        type: org.type,
+        website: org.website,
+        location: org.location,
+        industry: org.industry,
+        description: org.description,
+      },
+    });
+
+    if (org.experience) {
+      await prisma.workExperience.deleteMany({
+        where: { organizationId: record.id },
+      });
+      await prisma.workExperience.create({
+        data: {
+          title: org.experience.title,
+          type: org.experience.type,
+          startDate: new Date(org.experience.startDate),
+          endDate: org.experience.endDate
+            ? new Date(org.experience.endDate)
+            : undefined,
+          highlights: org.experience.highlights ?? [],
+          position: org.experience.position ?? 0,
+          organizationId: record.id,
+        },
+      });
+    }
+  }
+
+  await prisma.accolade.deleteMany({});
+  for (const accolade of raw.accolades) {
+    await prisma.accolade.create({
+      data: {
+        title: accolade.title,
+        issuer: accolade.issuer,
+        type: accolade.type,
+        date: accolade.date ? new Date(accolade.date) : undefined,
+        url: accolade.url,
+        description: accolade.description,
+        position: accolade.position ?? 0,
+      },
+    });
+  }
+
+  console.log(
+    `  ${raw.organizations.length} organizations + experience, ${raw.accolades.length} accolades seeded.`,
+  );
+}
+
 async function seedTimeline() {
   console.log('Seeding timeline...');
 
@@ -258,6 +357,7 @@ async function main() {
   await seedProjects();
   await seedStack();
   await seedTimeline();
+  await seedCareer();
 
   console.log('\nContent seed complete!');
 }

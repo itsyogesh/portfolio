@@ -25,6 +25,8 @@ const HomePage = async () => {
   const latestPosts = blog.getLatestPosts(3);
   const name = profile?.name || 'Portfolio';
   const headline = profile?.headline || 'Personal portfolio';
+  const companies = featuredProjects.filter((p) => p.category === 'company');
+  const projects = featuredProjects.filter((p) => p.category !== 'company');
 
   return (
     <div className="mx-auto max-w-2xl px-6 pt-24 pb-20">
@@ -41,8 +43,47 @@ const HomePage = async () => {
       {/* Divider */}
       <div className="border-t border-border mb-16" />
 
-      {/* Featured Projects */}
-      {featuredProjects.length > 0 && (
+      {/* Companies */}
+      {companies.length > 0 && (
+        <section className="mb-20">
+          <div className="flex items-baseline justify-between mb-8">
+            <h2 className="font-display italic text-2xl text-foreground">
+              Companies
+            </h2>
+          </div>
+          <div className="space-y-1">
+            {companies.map((project) => (
+              <Link
+                key={project.slug}
+                href={`/projects/${project.slug}`}
+                className="group flex items-center justify-between py-4 border-b border-border/50 hover:border-border transition-colors"
+              >
+                <div className="min-w-0 space-y-1">
+                  <div className="flex items-center gap-4 min-w-0">
+                    <h3 className="font-medium text-foreground truncate">
+                      {project.title}
+                    </h3>
+                    <span
+                      className={`text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full shrink-0 ${statusColors[project.status] ?? 'bg-zinc-500/15 text-zinc-500'}`}
+                    >
+                      {project.status}
+                    </span>
+                  </div>
+                  {project.summary ? (
+                    <p className="text-sm text-muted-foreground line-clamp-1">
+                      {project.summary}
+                    </p>
+                  ) : null}
+                </div>
+                <ArrowUpRight className="h-4 w-4 text-muted-foreground opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all shrink-0 ml-4" />
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Projects */}
+      {projects.length > 0 && (
         <section className="mb-20">
           <div className="flex items-baseline justify-between mb-8">
             <h2 className="font-display italic text-2xl text-foreground">
@@ -56,7 +97,7 @@ const HomePage = async () => {
             </Link>
           </div>
           <div className="space-y-1">
-            {featuredProjects.map((project) => (
+            {projects.map((project) => (
               <Link
                 key={project.slug}
                 href={`/projects/${project.slug}`}
