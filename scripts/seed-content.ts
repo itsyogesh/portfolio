@@ -50,15 +50,15 @@ function parseFrontmatter(raw: string): { frontmatter: Record<string, unknown>; 
 async function seedProfile() {
   console.log('Seeding profile...');
 
-  const bio = `I dropped out of engineering college in 2013 and started building software. Since then, I've shipped products across fintech, Web3, EV infrastructure, e-commerce, and developer tools.
+  const bio = `I dropped out of engineering college in 2013 because building things for real startups taught me more than lectures ever did. That decision set the pattern for everything since: learn by shipping.
 
-My first real venture was Unstudious, an EdTech startup tackling book piracy in India. Matrix Partners and Tracxn noticed. That was enough validation to keep going.
+The early years were employment and contracts — Paytm (seller platform, then growth engineering), four years building a fintech app at Pei that Americans used every day, a stint at Flex after the acquihire. Before all of that there was Unstudious, my first venture, an EdTech idea good enough that Matrix Partners and Tracxn came asking. It didn't become a company, but it made me one.
 
-I spent two years at Paytm (seller dashboard backend, then growth engineering), four years at Pei (a payment fintech), and a stint at Flex post-acquisition before going fully independent.
+In 2019 I started **Droidsize**, the product studio where most of my work lives today — SaaS and AI products like Domain Collective, Sparkles, and TripleWave, built on shared rails that make every next product faster. In 2023 my wife and I founded **Charge23 Labs** to build Chargespot, EV charging for India — DPIIT-recognised, incubated at AIC Sangam, and the hardest problem I've picked yet. On my own time I build in the Polkadot ecosystem: Relaycode is funded by the Web3 Foundation, with its second milestone delivered in early 2026.
 
-Today I run Droidsize Technologies, a product studio building SaaS and AI tools. I'm also building Chargespot (EV charging infrastructure through Charge23 Labs) and Relaycode (Polkadot developer tooling funded by the Web3 Foundation).
+Since late 2025 I've built almost everything with AI agents in the loop. It's the biggest shift in how I work since I learned to program — I ship faster today than at any point in thirteen years.
 
-Since late 2025, I've been building almost everything with AI agents. Claude Code changed how I work. I ship faster now than at any point in my career.`;
+What I'm optimising for now: fewer, better products. Public work over private drafts. And the kind of compounding that only shows up when you keep building for a long time.`;
 
   await prisma.profile.upsert({
     where: { id: 'owner' },
