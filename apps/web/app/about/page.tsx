@@ -146,9 +146,25 @@ const AboutPage = async () => {
             {experience.map((role) => (
               <div
                 key={role.id}
-                className="flex items-baseline justify-between gap-6 py-4 border-b border-border/50"
+                className="flex items-start justify-between gap-6 py-4 border-b border-border/50"
               >
-                <div className="min-w-0 space-y-1">
+                <div className="flex min-w-0 items-start gap-3.5">
+                  {role.organization.logoUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={role.organization.logoUrl}
+                      alt=""
+                      className="mt-0.5 h-6 w-6 shrink-0 rounded-md object-contain"
+                    />
+                  ) : (
+                    <span
+                      aria-hidden="true"
+                      className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-muted text-[11px] font-semibold text-muted-foreground"
+                    >
+                      {role.organization.name.charAt(0)}
+                    </span>
+                  )}
+                  <div className="min-w-0 space-y-1">
                   <h3 className="font-medium text-foreground">
                     {role.title} ·{' '}
                     <span className="text-muted-foreground font-normal">
@@ -160,8 +176,9 @@ const AboutPage = async () => {
                       {role.highlights[0]}
                     </p>
                   ) : null}
+                  </div>
                 </div>
-                <span className="text-xs text-muted-foreground/70 tabular-nums shrink-0">
+                <span className="text-xs text-muted-foreground/70 tabular-nums shrink-0 pt-0.5">
                   {formatYear(role.startDate)}–
                   {role.endDate ? formatYear(role.endDate) : 'now'}
                 </span>

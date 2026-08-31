@@ -18,7 +18,8 @@
           "Relaunched droidsize.com in 2026 — designed and built end-to-end with AI agents in the loop"
         ],
         "position": 0
-      }
+      },
+      "logoUrl": "/logos/droidsize.png"
     },
     {
       "slug": "charge23-labs",
@@ -38,7 +39,8 @@
           "Co-founded with Evisha Soni"
         ],
         "position": 1
-      }
+      },
+      "logoUrl": "/logos/charge23-labs.png"
     },
     {
       "slug": "stream",
@@ -73,7 +75,8 @@
           "Built the Flex JS SDK, a custom user-matching system, and internal dashboards"
         ],
         "position": 3
-      }
+      },
+      "logoUrl": "/logos/flex.png"
     },
     {
       "slug": "pei",
@@ -109,7 +112,8 @@
           "Growth engineering: multi-platform deep-linking service and price-comparison engine"
         ],
         "position": 5
-      }
+      },
+      "logoUrl": "/logos/paytm.png"
     },
     {
       "slug": "squadrun",
@@ -126,7 +130,8 @@
           "First engineering job — backend APIs and the first Android app"
         ],
         "position": 6
-      }
+      },
+      "logoUrl": "/logos/squadrun.png"
     }
   ],
   "accolades": [

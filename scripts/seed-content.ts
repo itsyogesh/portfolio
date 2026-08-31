@@ -154,6 +154,19 @@ async function seedProjects() {
 
 // ─── Seed Stack ──────────────────────────────────────────────────────
 
+async function cleanupRemovedProjects() {
+  const projectsDir = join(contentDir, 'projects');
+  const slugs = readdirSync(projectsDir)
+    .filter((f) => f.endsWith('.mdx'))
+    .map((f) => f.replace('.mdx', ''));
+  const removed = await prisma.project.deleteMany({
+    where: { slug: { notIn: slugs } },
+  });
+  if (removed.count > 0) {
+    console.log(`  Removed ${removed.count} project(s) no longer in content/.`);
+  }
+}
+
 async function seedStack() {
   console.log('Seeding stack...');
 
@@ -232,6 +245,7 @@ async function seedCareer() {
       location?: string;
       industry?: string;
       description?: string;
+      logoUrl?: string;
       experience?: {
         title: string;
         type: string;
@@ -262,6 +276,7 @@ async function seedCareer() {
         location: org.location,
         industry: org.industry,
         description: org.description,
+        logoUrl: org.logoUrl,
       },
       create: {
         slug: org.slug,
@@ -271,6 +286,7 @@ async function seedCareer() {
         location: org.location,
         industry: org.industry,
         description: org.description,
+        logoUrl: org.logoUrl,
       },
     });
 
@@ -355,6 +371,7 @@ async function main() {
 
   await seedProfile();
   await seedProjects();
+  await cleanupRemovedProjects();
   await seedStack();
   await seedTimeline();
   await seedCareer();
