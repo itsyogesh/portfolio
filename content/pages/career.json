@@ -232,7 +232,7 @@
       "name": "Millions",
       "type": "client",
       "industry": "Consumer",
-      "description": "Consumer iOS and Android apps.",
+      "description": "Consumer prize-draw app with daily drawings and instant wins.",
       "logoUrl": "/logos/freelance/millions.png",
       "experience": {
         "title": "Mobile Engineer",
@@ -240,10 +240,11 @@
         "startDate": "2019-06-01",
         "endDate": "2021-06-30",
         "highlights": [
-          "Two years of iOS and Android builds with complex animation work"
+          "Animation-heavy prize-wheel and daily-drawing experiences across iOS and Android"
         ],
         "position": 12
-      }
+      },
+      "website": "https://apps.apple.com/us/app/millions/id1536637351"
     }
   ],
   "accolades": [
