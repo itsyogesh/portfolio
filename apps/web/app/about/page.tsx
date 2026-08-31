@@ -103,6 +103,15 @@ const AboutPage = async () => {
                       href={`/projects/${project.slug}`}
                       className="group flex items-baseline justify-between gap-6 py-4 border-b border-border/50 hover:border-border transition-colors"
                     >
+                      <div className="flex min-w-0 items-start gap-3">
+                        {project.imageUrl ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={project.imageUrl} alt="" className="mt-0.5 h-6 w-6 shrink-0 rounded-md object-contain" />
+                        ) : (
+                          <span aria-hidden="true" className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-muted text-[11px] font-semibold text-muted-foreground">
+                            {project.title.charAt(0)}
+                          </span>
+                        )}
                       <div className="min-w-0 space-y-1">
                         <h3 className="font-medium text-foreground">
                           {project.title}
@@ -112,6 +121,7 @@ const AboutPage = async () => {
                             {project.summary}
                           </p>
                         ) : null}
+                      </div>
                       </div>
                       <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
                     </Link>

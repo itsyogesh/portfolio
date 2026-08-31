@@ -15,6 +15,11 @@
     "description": "Left Paytm to work directly with product teams in the US and Europe across React, React Native, and early blockchain systems."
   },
   {
+    "year": "2017",
+    "title": "First blockchain work",
+    "description": "Built Busy.org's commenting system on Steem, a Komodo wallet over Zcash's zero-knowledge stack, and Ryze's card-trading apps."
+  },
+  {
     "year": "2018",
     "title": "Pei · Bitcharge",
     "description": "Started four years as the engineer behind Pei's consumer fintech apps. Shipped Bitcharge v1; 195 businesses used it to accept crypto payments."
@@ -27,7 +32,7 @@
   {
     "year": "2021",
     "title": "Polkadot",
-    "description": "First Kusama treasury grants. The start of sustained work on developer tooling for the ecosystem."
+    "description": "First Kusama treasury grants — the move from general blockchain work to Polkadot developer tooling."
   },
   {
     "year": "2022",
