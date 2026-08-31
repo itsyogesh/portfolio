@@ -67,6 +67,7 @@ What I'm optimising for now: fewer, better products. Public work over private dr
       headline: 'Founder of Droidsize and Chargespot. Building useful software from Delhi since 2013.',
       bio,
       website: 'https://itsyogesh.fyi',
+      avatarUrl: '/avatar.jpg',
     },
     create: {
       id: 'owner',
@@ -74,6 +75,7 @@ What I'm optimising for now: fewer, better products. Public work over private dr
       headline: 'Founder of Droidsize and Chargespot. Building useful software from Delhi since 2013.',
       bio,
       website: 'https://itsyogesh.fyi',
+      avatarUrl: '/avatar.jpg',
     },
   });
 

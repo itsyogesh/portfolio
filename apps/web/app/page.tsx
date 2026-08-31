@@ -32,6 +32,23 @@ const HomePage = async () => {
     <div className="mx-auto max-w-2xl px-6 pt-24 pb-20">
       {/* Hero */}
       <section className="mb-24">
+        {profile?.avatarUrl ? (
+          <div className="relative mb-8 h-20 w-20">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={profile.avatarUrl}
+              alt=""
+              aria-hidden="true"
+              className="absolute inset-0 h-full w-full scale-110 rounded-full opacity-50 blur-xl"
+            />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={profile.avatarUrl}
+              alt={name}
+              className="relative h-full w-full rounded-full object-cover shadow-lg ring-1 ring-border"
+            />
+          </div>
+        ) : null}
         <h1 className="font-display text-5xl sm:text-6xl tracking-tight leading-[1.1] mb-6">
           {name}
         </h1>

@@ -23,7 +23,7 @@ export const Header = ({ profileName }: { profileName: string }) => {
           href="/"
           className="text-sm font-semibold tracking-tight text-foreground hover:text-foreground/80 transition-colors"
         >
-          {profileName.toLowerCase()}
+          {profileName}
         </Link>
 
         <nav className="flex items-center gap-1">
