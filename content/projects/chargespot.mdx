@@ -1,26 +1,25 @@
 ---
 title: "Chargespot"
-description: "EV charging platform with OCPP/OCPI protocol support. Full-stack from mobile apps to station infrastructure."
-date: "2023-08-01"
-status: "active"
-category: "consumer"
-tech: ["Flutter", "Django", "Go", "Terraform", "AWS", "TypeScript"]
+description: "EV charging for India, built at Charge23 Labs — DPIIT-recognised, incubated at AIC Sangam, co-founded with my wife."
+date: "2023-08-28"
+status: "building"
+category: "ev"
+tech: ["Flutter", "Django", "Go", "TypeScript", "Terraform", "AWS"]
+url: "https://chargespot.app"
 featured: true
 order: 2
 ---
 
-Chargespot is an EV charging platform I built through Charge23 Labs, a DPIIT-recognized startup incubated at AIC Sangam.
+Chargespot is the EV charging platform we're building at **Charge23 Labs**, the company I co-founded with my wife Evisha in August 2023. It's a DPIIT-recognised startup, incubated at AIC Sangam, and the most hardware-adjacent thing I've ever worked on.
 
-## The Stack
+## What we're building
 
-This is one of the most technically diverse projects I've worked on:
+The consumer side is an EV companion app: vehicle setup, battery-aware trip planning, charging discovery, session start and monitoring, and OBD telemetry. Underneath sits the operator side — a charging station management system speaking **OCPP and OCPI (v2.0–2.2.1)**, so any compliant charger can join the network.
 
-- **Mobile** — Flutter/Dart apps for iOS and Android
-- **Backend** — Python/Django with Unfold Admin
-- **Station Server** — Go-based OCPP/OCPI protocol handler for charging hardware
-- **Web Dashboard** — TypeScript
-- **Infrastructure** — Terraform on AWS
+## The stack
 
-## Standards Compliance
+A Flutter app, a Django backend with a Go station server, TypeScript web dashboards, and Terraform-managed AWS infrastructure — around twenty repositories under the charge23 organisation.
 
-Full support for OCPP v2.0-2.2.1 and OCPI v2.0-2.2.1, the industry standards for EV charging communication.
+## Honest status
+
+Pre-launch. We raised a small round, built a five-person team, and burned most of it learning how hard EV infrastructure really is. We're still here, still building — the next milestone is a pilot site with real chargers and real drivers.

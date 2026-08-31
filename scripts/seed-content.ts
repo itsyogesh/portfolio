@@ -64,14 +64,14 @@ Since late 2025, I've been building almost everything with AI agents. Claude Cod
     where: { id: 'owner' },
     update: {
       name: 'Yogesh Kumar',
-      headline: 'Full-stack builder. 12+ years shipping products.',
+      headline: 'Founder of Droidsize and Chargespot. Building useful software from Delhi since 2013.',
       bio,
       website: 'https://itsyogesh.fyi',
     },
     create: {
       id: 'owner',
       name: 'Yogesh Kumar',
-      headline: 'Full-stack builder. 12+ years shipping products.',
+      headline: 'Founder of Droidsize and Chargespot. Building useful software from Delhi since 2013.',
       bio,
       website: 'https://itsyogesh.fyi',
     },

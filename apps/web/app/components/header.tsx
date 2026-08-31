@@ -10,8 +10,6 @@ const navigation = [
   { name: 'About', href: '/about' },
   { name: 'Projects', href: '/projects' },
   { name: 'Writing', href: '/writing' },
-  { name: 'Bookmarks', href: '/bookmarks' },
-  { name: 'Stack', href: '/stack' },
 ];
 
 export const Header = ({ profileName }: { profileName: string }) => {

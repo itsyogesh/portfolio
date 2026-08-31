@@ -62,15 +62,22 @@ const HomePage = async () => {
                 href={`/projects/${project.slug}`}
                 className="group flex items-center justify-between py-4 border-b border-border/50 hover:border-border transition-colors"
               >
-                <div className="flex items-center gap-4 min-w-0">
-                  <h3 className="font-medium text-foreground truncate">
-                    {project.title}
-                  </h3>
-                  <span
-                    className={`text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full shrink-0 ${statusColors[project.status] ?? 'bg-zinc-500/15 text-zinc-500'}`}
-                  >
-                    {project.status}
-                  </span>
+                <div className="min-w-0 space-y-1">
+                  <div className="flex items-center gap-4 min-w-0">
+                    <h3 className="font-medium text-foreground truncate">
+                      {project.title}
+                    </h3>
+                    <span
+                      className={`text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full shrink-0 ${statusColors[project.status] ?? 'bg-zinc-500/15 text-zinc-500'}`}
+                    >
+                      {project.status}
+                    </span>
+                  </div>
+                  {project.summary ? (
+                    <p className="text-sm text-muted-foreground line-clamp-1">
+                      {project.summary}
+                    </p>
+                  ) : null}
                 </div>
                 <ArrowUpRight className="h-4 w-4 text-muted-foreground opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all shrink-0 ml-4" />
               </Link>
