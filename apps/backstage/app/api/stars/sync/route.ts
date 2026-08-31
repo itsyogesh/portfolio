@@ -2,6 +2,8 @@ import { database } from '@packages/db';
 import { NextResponse } from 'next/server';
 import { requireAdmin } from '../../_lib/auth';
 
+export const maxDuration = 60;
+
 type GitHubStarredRepo = {
   id: number;
   full_name: string;

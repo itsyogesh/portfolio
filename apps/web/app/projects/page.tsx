@@ -1,12 +1,14 @@
 import { database } from '@packages/db';
-import { createMetadata } from '@packages/seo/metadata';
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { createProfileMetadata } from '../lib/metadata';
 
-export const metadata: Metadata = createMetadata({
-  title: 'Projects',
-  description: 'Ventures and products I\'ve built — SaaS, Web3, EV charging, developer tools, and more.',
-});
+export const generateMetadata = async (): Promise<Metadata> =>
+  createProfileMetadata({
+    title: 'Projects',
+    description: 'Ventures, products, open-source work, and experiments.',
+    path: '/projects',
+  });
 
 const statusOrder = ['active', 'building', 'shipped', 'legacy', 'concept'] as const;
 

@@ -77,17 +77,17 @@ export function MonthView({
           return (
             <div
               key={day.toISOString()}
-              className={`min-h-[100px] border-b border-r border-border p-1 cursor-pointer hover:bg-muted/30 transition-colors ${
+              className={`relative min-h-[100px] border-b border-r border-border p-1 ${
                 !inMonth ? 'bg-muted/10' : ''
               }`}
-              onClick={() => onDayClick(day)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') onDayClick(day);
-              }}
-              role="button"
-              tabIndex={0}
             >
-              <div className="flex justify-between px-1">
+              <button
+                type="button"
+                className="absolute inset-0 cursor-pointer transition-colors hover:bg-muted/30"
+                onClick={() => onDayClick(day)}
+                aria-label={`Create an event on ${format(day, 'MMMM d, yyyy')}`}
+              />
+              <div className="pointer-events-none relative z-[1] flex justify-between px-1">
                 <span
                   className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-xs ${
                     today
@@ -101,12 +101,12 @@ export function MonthView({
                 </span>
               </div>
 
-              <div className="mt-1 space-y-0.5">
+              <div className="pointer-events-none relative z-[1] mt-1 space-y-0.5">
                 {dayEvents.slice(0, MAX_VISIBLE_EVENTS).map((event) => (
                   <button
                     key={event.id}
                     type="button"
-                    className="w-full truncate rounded px-1.5 py-0.5 text-left text-[11px] leading-tight text-white transition-opacity hover:opacity-80"
+                    className="pointer-events-auto w-full truncate rounded px-1.5 py-0.5 text-left text-[11px] leading-tight text-white transition-opacity hover:opacity-80"
                     style={{
                       backgroundColor:
                         event.calendar.color ||

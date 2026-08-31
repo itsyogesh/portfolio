@@ -51,7 +51,7 @@ export function HeaderBreadcrumb() {
   const crumbs: { label: string; href: string }[] = [];
 
   for (let i = 0; i < segments.length - 1; i++) {
-    const href = '/' + segments.slice(0, i + 1).join('/');
+    const href = `/${segments.slice(0, i + 1).join('/')}`;
     const label = pageTitles[href] || segments[i];
     crumbs.push({ label, href });
   }

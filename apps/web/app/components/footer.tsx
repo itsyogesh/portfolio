@@ -13,7 +13,7 @@ const platformIcons: Record<string, typeof Github> = {
 
 export const Footer = async () => {
   const profile = await getProfile();
-  const name = profile?.name || 'Yogesh Kumar';
+  const name = profile?.name || 'Portfolio';
   const socials = profile?.socials || [];
 
   return (

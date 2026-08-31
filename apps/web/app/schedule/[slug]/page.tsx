@@ -1,6 +1,7 @@
 import { database } from '@packages/db';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
+import { createProfileMetadata } from '../../lib/metadata';
 import { BookingClient } from './booking-client';
 
 export async function generateMetadata({
@@ -14,10 +15,11 @@ export async function generateMetadata({
     select: { title: true, description: true },
   });
 
-  return {
+  return createProfileMetadata({
     title: eventType?.title || 'Schedule',
     description: eventType?.description || 'Book a time',
-  };
+    path: `/schedule/${slug}`,
+  });
 }
 
 export default async function BookingPage({

@@ -167,8 +167,9 @@ export function EventTypeFormDialog({
         <form onSubmit={handleSubmit} className="p-4 space-y-4">
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs text-muted-foreground mb-1">Title</label>
+              <label htmlFor="event-type-title" className="block text-xs text-muted-foreground mb-1">Title</label>
               <input
+                id="event-type-title"
                 type="text"
                 value={title}
                 onChange={(e) => handleTitleChange(e.target.value)}
@@ -177,8 +178,9 @@ export function EventTypeFormDialog({
               />
             </div>
             <div>
-              <label className="block text-xs text-muted-foreground mb-1">Slug</label>
+              <label htmlFor="event-type-slug" className="block text-xs text-muted-foreground mb-1">Slug</label>
               <input
+                id="event-type-slug"
                 type="text"
                 value={slug}
                 onChange={(e) => setSlug(e.target.value)}
@@ -189,8 +191,9 @@ export function EventTypeFormDialog({
           </div>
 
           <div>
-            <label className="block text-xs text-muted-foreground mb-1">Description</label>
+            <label htmlFor="event-type-description" className="block text-xs text-muted-foreground mb-1">Description</label>
             <textarea
+              id="event-type-description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={2}
@@ -201,8 +204,9 @@ export function EventTypeFormDialog({
 
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="block text-xs text-muted-foreground mb-1">Duration (min)</label>
+              <label htmlFor="event-type-duration" className="block text-xs text-muted-foreground mb-1">Duration (min)</label>
               <input
+                id="event-type-duration"
                 type="number"
                 value={durationMinutes}
                 onChange={(e) => setDurationMinutes(Number(e.target.value))}
@@ -212,8 +216,9 @@ export function EventTypeFormDialog({
               />
             </div>
             <div>
-              <label className="block text-xs text-muted-foreground mb-1">Buffer before</label>
+              <label htmlFor="event-type-buffer-before" className="block text-xs text-muted-foreground mb-1">Buffer before</label>
               <input
+                id="event-type-buffer-before"
                 type="number"
                 value={bufferBefore}
                 onChange={(e) => setBufferBefore(Number(e.target.value))}
@@ -222,8 +227,9 @@ export function EventTypeFormDialog({
               />
             </div>
             <div>
-              <label className="block text-xs text-muted-foreground mb-1">Buffer after</label>
+              <label htmlFor="event-type-buffer-after" className="block text-xs text-muted-foreground mb-1">Buffer after</label>
               <input
+                id="event-type-buffer-after"
                 type="number"
                 value={bufferAfter}
                 onChange={(e) => setBufferAfter(Number(e.target.value))}
@@ -235,8 +241,9 @@ export function EventTypeFormDialog({
 
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="block text-xs text-muted-foreground mb-1">Min notice (min)</label>
+              <label htmlFor="event-type-min-notice" className="block text-xs text-muted-foreground mb-1">Min notice (min)</label>
               <input
+                id="event-type-min-notice"
                 type="number"
                 value={minNotice}
                 onChange={(e) => setMinNotice(Number(e.target.value))}
@@ -245,8 +252,9 @@ export function EventTypeFormDialog({
               />
             </div>
             <div>
-              <label className="block text-xs text-muted-foreground mb-1">Max future days</label>
+              <label htmlFor="event-type-max-future" className="block text-xs text-muted-foreground mb-1">Max future days</label>
               <input
+                id="event-type-max-future"
                 type="number"
                 value={maxFutureDays}
                 onChange={(e) => setMaxFutureDays(Number(e.target.value))}
@@ -255,8 +263,9 @@ export function EventTypeFormDialog({
               />
             </div>
             <div>
-              <label className="block text-xs text-muted-foreground mb-1">Color</label>
+              <label htmlFor="event-type-color" className="block text-xs text-muted-foreground mb-1">Color</label>
               <input
+                id="event-type-color"
                 type="color"
                 value={color}
                 onChange={(e) => setColor(e.target.value)}
@@ -267,7 +276,7 @@ export function EventTypeFormDialog({
 
           {/* Availability */}
           <div>
-            <label className="block text-xs text-muted-foreground mb-2">Availability</label>
+            <p className="block text-xs text-muted-foreground mb-2">Availability</p>
             <div className="space-y-2">
               {DAYS.map((day, i) => (
                 <div key={day} className="flex items-center gap-3">
@@ -305,10 +314,11 @@ export function EventTypeFormDialog({
           {/* Target calendar */}
           {writableCalendars.length > 0 && (
             <div>
-              <label className="block text-xs text-muted-foreground mb-1">
+              <label htmlFor="event-type-target-calendar" className="block text-xs text-muted-foreground mb-1">
                 Create events on
               </label>
               <select
+                id="event-type-target-calendar"
                 value={targetCalendarId}
                 onChange={(e) => setTargetCalendarId(e.target.value)}
                 className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-sm"
@@ -326,9 +336,9 @@ export function EventTypeFormDialog({
           {/* Check calendars */}
           {calendars.length > 0 && (
             <div>
-              <label className="block text-xs text-muted-foreground mb-2">
+              <p className="block text-xs text-muted-foreground mb-2">
                 Check these for conflicts
-              </label>
+              </p>
               <div className="space-y-1 max-h-32 overflow-y-auto">
                 {calendars.map((cal) => (
                   <label key={cal.id} className="flex items-center gap-2 text-sm">

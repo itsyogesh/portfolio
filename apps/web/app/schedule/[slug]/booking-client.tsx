@@ -25,6 +25,7 @@ export function BookingClient({ eventType }: { eventType: EventType }) {
   const [slots, setSlots] = useState<Slot[]>([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
+  const [idempotencyKey, setIdempotencyKey] = useState(() => crypto.randomUUID());
   const [step, setStep] = useState<'date' | 'form'>('date');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -69,7 +70,6 @@ export function BookingClient({ eventType }: { eventType: EventType }) {
     setError(null);
 
     const formData = new FormData(e.currentTarget);
-    const idempotencyKey = crypto.randomUUID();
 
     try {
       const res = await fetch(`/api/schedule/${eventType.slug}/book`, {
@@ -91,8 +91,8 @@ export function BookingClient({ eventType }: { eventType: EventType }) {
         return;
       }
 
-      // Redirect to confirmation
-      window.location.href = `/schedule/${eventType.slug}/confirmed?time=${encodeURIComponent(selectedSlot.startTime)}&name=${encodeURIComponent(formData.get('name') as string)}`;
+      // Keep personal booking details out of URLs, browser history, and logs.
+      window.location.href = `/schedule/${eventType.slug}/confirmed`;
     } catch {
       setError('Something went wrong. Please try again.');
     } finally {
@@ -119,6 +119,10 @@ export function BookingClient({ eventType }: { eventType: EventType }) {
   };
 
   const days = getDaysInMonth(viewMonth);
+  const calendarCells = days.map((day, index) => ({
+    day,
+    key: day?.toISOString() || `empty-${viewMonth.toISOString()}-${index}`,
+  }));
   const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   if (step === 'form' && selectedSlot) {
@@ -260,9 +264,9 @@ export function BookingClient({ eventType }: { eventType: EventType }) {
                 {d}
               </div>
             ))}
-            {days.map((day, i) => {
+            {calendarCells.map(({ day, key }) => {
               if (!day) {
-                return <div key={`empty-${i}`} />;
+                return <div key={key} />;
               }
               const isPast = isBefore(day, today);
               const isTooFar = day > maxDate;
@@ -273,7 +277,7 @@ export function BookingClient({ eventType }: { eventType: EventType }) {
 
               return (
                 <button
-                  key={day.toISOString()}
+                  key={key}
                   type="button"
                   disabled={isDisabled}
                   onClick={() => setSelectedDate(day)}
@@ -321,6 +325,7 @@ export function BookingClient({ eventType }: { eventType: EventType }) {
                     type="button"
                     onClick={() => {
                       setSelectedSlot(slot);
+                      setIdempotencyKey(crypto.randomUUID());
                       setStep('form');
                     }}
                     className={`

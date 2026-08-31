@@ -6,7 +6,16 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**",
+        ".content-collections/**",
+        "dist/**",
+        "generated/**"
+      ]
+    },
+    "typecheck": {
+      "outputs": []
     },
     "dev": {
       "cache": false,

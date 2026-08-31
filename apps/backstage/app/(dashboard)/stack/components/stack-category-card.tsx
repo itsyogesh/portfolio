@@ -114,7 +114,7 @@ export function StackCategoryCard({ category }: StackCategoryCardProps) {
                 src={
                   item.iconSlug
                     ? `https://cdn.simpleicons.org/${item.iconSlug}`
-                    : item.logoUrl!
+                    : item.logoUrl || ''
                 }
                 alt={item.name}
                 className={`h-6 w-6 rounded object-contain shrink-0${item.iconSlug ? ' dark:invert' : ''}`}

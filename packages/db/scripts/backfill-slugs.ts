@@ -5,9 +5,12 @@ import { PrismaClient } from '../generated/client';
 
 neonConfig.webSocketConstructor = ws;
 
-const adapter = new PrismaNeon({
-  connectionString: process.env.DATABASE_URL!,
-});
+const connectionString = process.env.DATABASE_URL;
+if (!connectionString) {
+  throw new Error('DATABASE_URL environment variable is not configured');
+}
+
+const adapter = new PrismaNeon({ connectionString });
 const prisma = new PrismaClient({ adapter });
 
 function slugify(name: string): string {
@@ -30,7 +33,7 @@ async function backfillSlugs() {
   console.log(`Backfilling slugs for ${orgs.length} organizations...`);
 
   for (const org of orgs) {
-    let slug = slugify(org.name);
+    const slug = slugify(org.name);
 
     // Handle duplicates by appending a suffix
     let suffix = 0;

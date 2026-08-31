@@ -66,7 +66,7 @@ export default async function AccoladesPage() {
   const knownTypes = new Set(typeOrder);
   const otherAccolades = accolades.filter((a) => !knownTypes.has(a.type));
   if (otherAccolades.length > 0) {
-    grouped['other'] = otherAccolades;
+    grouped.other = otherAccolades;
   }
 
   const groupKeys = Object.keys(grouped);

@@ -34,6 +34,7 @@ async function fetchAllStarred(username: string): Promise<GitHubRepo[]> {
   let page = 1;
   const headers: Record<string, string> = {
     Accept: 'application/vnd.github.v3+json',
+    'User-Agent': 'backstage-stars-sync',
   };
   if (process.env.GITHUB_TOKEN) {
     headers.Authorization = `token ${process.env.GITHUB_TOKEN}`;
@@ -50,8 +51,9 @@ async function fetchAllStarred(username: string): Promise<GitHubRepo[]> {
 
     if (!res.ok) {
       if (res.status === 403) {
-        console.error(`Rate limited. Fetched ${allRepos.length} repos so far.`);
-        break;
+        throw new Error(
+          `GitHub rate limit reached after ${allRepos.length} repos. No database cleanup was performed.`
+        );
       }
       throw new Error(`GitHub API error: ${res.status} ${res.statusText}`);
     }
@@ -137,7 +139,7 @@ async function main() {
     }
   }
 
-  console.log(`\nSync complete!`);
+  console.log('\nSync complete!');
   console.log(`  Created: ${created}`);
   console.log(`  Updated: ${updated}`);
   console.log(`  Unstarred: ${unstarred}`);

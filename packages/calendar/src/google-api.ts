@@ -156,12 +156,13 @@ export async function createEvent(
     start: { dateTime?: string; date?: string; timeZone?: string };
     end: { dateTime?: string; date?: string; timeZone?: string };
     attendees?: Array<{ email: string }>;
-  }
+  },
+  sendUpdates: 'all' | 'externalOnly' | 'none' = 'none'
 ): Promise<GoogleEvent> {
   const encodedCalendarId = encodeURIComponent(calendarId);
   return calendarFetch<GoogleEvent>(
     accessToken,
-    `/calendars/${encodedCalendarId}/events?sendUpdates=none`,
+    `/calendars/${encodedCalendarId}/events?sendUpdates=${sendUpdates}`,
     {
       method: 'POST',
       body: JSON.stringify(event),

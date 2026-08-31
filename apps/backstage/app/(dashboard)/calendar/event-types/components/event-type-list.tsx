@@ -30,6 +30,18 @@ interface CalendarOption {
   accessRole: string;
 }
 
+type EventTypeApiResponse = Omit<
+  EventType,
+  'targetCalendarId' | 'checkCalendarIds' | 'bookingCount'
+> & {
+  targetCalendar?: { id: string } | null;
+  checkCalendars?: Array<{
+    calendarId: string;
+    calendar?: { id: string } | null;
+  }>;
+  _count?: { bookings: number };
+};
+
 export function EventTypeList({
   eventTypes: initial,
   calendars,
@@ -75,12 +87,15 @@ export function EventTypeList({
     try {
       const res = await fetch('/api/calendar/event-types');
       if (res.ok) {
-        const data = await res.json();
+        const data = (await res.json()) as EventTypeApiResponse[];
         setEventTypes(
-          data.map((et: any) => ({
+          data.map((et) => ({
             ...et,
             targetCalendarId: et.targetCalendar?.id || null,
-            checkCalendarIds: et.checkCalendars?.map((c: any) => c.calendar?.id || c.calendarId) || [],
+            checkCalendarIds:
+              et.checkCalendars?.map(
+                (calendar) => calendar.calendar?.id || calendar.calendarId
+              ) || [],
             bookingCount: et._count?.bookings || 0,
           }))
         );
@@ -91,7 +106,10 @@ export function EventTypeList({
   };
 
   const copyLink = (slug: string) => {
-    navigator.clipboard.writeText(`${window.location.origin.replace(':4001', ':4000')}/schedule/${slug}`);
+    const publicSiteUrl =
+      process.env.NEXT_PUBLIC_WEB_URL ||
+      window.location.origin.replace(':4001', ':4000');
+    navigator.clipboard.writeText(`${publicSiteUrl}/schedule/${slug}`);
   };
 
   return (
@@ -155,7 +173,7 @@ export function EventTypeList({
                   <Copy className="h-4 w-4 text-muted-foreground" />
                 </button>
                 <a
-                  href={`/schedule/${et.slug}`}
+                  href={`${process.env.NEXT_PUBLIC_WEB_URL || ''}/schedule/${et.slug}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="rounded-md p-1.5 hover:bg-muted"

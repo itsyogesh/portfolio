@@ -5,10 +5,16 @@ import type { AvailabilitySchedule, AvailableSlot, TimeSlot } from './types';
 
 /**
  * Get available booking slots for an event type on a given date.
+ *
+ * The `date` is a YYYY-MM-DD string representing the day the *booker* selected
+ * in their local timezone (`bookerTimezone`). We convert that day into the
+ * corresponding host-timezone window so that cross-timezone bookings surface
+ * all correct slots (e.g. late-evening host slots that are the next calendar
+ * day for the booker).
  */
 export async function getAvailableSlots(
   eventTypeId: string,
-  date: string, // YYYY-MM-DD
+  date: string, // YYYY-MM-DD in booker's local timezone
   bookerTimezone: string
 ): Promise<AvailableSlot[]> {
   const eventType = await database.eventType.findUniqueOrThrow({
@@ -27,20 +33,39 @@ export async function getAvailableSlots(
   const availability = eventType.availability as unknown as AvailabilitySchedule;
   const tz = eventType.timezone;
 
-  // Parse the requested date in the event type's timezone
-  const dayStart = new Date(`${date}T00:00:00`);
-  const dayOfWeek = getDayOfWeekInTimezone(date, tz);
+  // Convert the booker's selected day boundaries to UTC
+  const bookerDayStartUTC = parseTimeInTimezone(date, '00:00', bookerTimezone);
+  const bookerDayEndUTC = parseTimeInTimezone(
+    nextDateStr(date),
+    '00:00',
+    bookerTimezone
+  );
 
-  const daySlots = availability[dayOfWeek];
-  if (!daySlots || daySlots.length === 0) return [];
-
-  // Generate candidate time slots
-  const candidates = generateCandidateSlots(
-    date,
-    daySlots,
-    eventType.durationMinutes,
+  // Determine which host-timezone day(s) the booker's day spans.
+  // The booker's day may cover parts of two host days (e.g. booker in Tokyo
+  // selects March 10, but the host in LA is still on March 9 for some hours).
+  const hostDays = getHostDaysCoveredByBookerDay(
+    bookerDayStartUTC,
+    bookerDayEndUTC,
     tz
   );
+
+  // Generate candidate slots for every host day that overlaps
+  let candidates: AvailableSlot[] = [];
+  for (const hostDate of hostDays) {
+    const dayOfWeek = getDayOfWeekInTimezone(hostDate, tz);
+    const daySlots = availability[dayOfWeek];
+    if (!daySlots || daySlots.length === 0) continue;
+    candidates = candidates.concat(
+      generateCandidateSlots(hostDate, daySlots, eventType.durationMinutes, tz)
+    );
+  }
+
+  // Keep only slots whose start falls within the booker's selected day
+  candidates = candidates.filter((slot) => {
+    const start = new Date(slot.startTime);
+    return start >= bookerDayStartUTC && start < bookerDayEndUTC;
+  });
 
   // Apply minNotice filter
   const now = new Date();
@@ -58,20 +83,15 @@ export async function getAvailableSlots(
 
   if (filtered.length === 0) return [];
 
-  // Fetch busy times — compute day boundaries in the event type's timezone
-  // Use next-day midnight instead of +24h to handle DST transitions (23h/25h days)
-  const dayStartUTC = parseTimeInTimezone(date, '00:00', tz);
-  const [year, month, day_] = date.split('-').map(Number);
-  const nextDay = new Date(year, month - 1, day_ + 1);
-  const nextDayStr = `${nextDay.getFullYear()}-${String(nextDay.getMonth() + 1).padStart(2, '0')}-${String(nextDay.getDate()).padStart(2, '0')}`;
-  const dayEndUTC = parseTimeInTimezone(nextDayStr, '00:00', tz);
-  const dayStartISO = dayStartUTC.toISOString();
-  const dayEndISO = dayEndUTC.toISOString();
+  // Fetch busy times — use the booker's full day window (already in UTC)
+  const dayStartISO = bookerDayStartUTC.toISOString();
+  const dayEndISO = bookerDayEndUTC.toISOString();
 
   const busyTimes = await fetchBusyTimes(
     eventType.checkCalendars,
     dayStartISO,
-    dayEndISO
+    dayEndISO,
+    tz
   );
 
   // Also check existing bookings — use overlapping range check, not fully-contained
@@ -108,6 +128,51 @@ export async function getAvailableSlots(
       return slotStart < busyEnd && slotEnd > busyStart;
     });
   });
+}
+
+/**
+ * Given a YYYY-MM-DD string, return the next day as YYYY-MM-DD.
+ */
+function nextDateStr(dateStr: string): string {
+  const [year, month, day] = dateStr.split('-').map(Number);
+  const next = new Date(year, month - 1, day + 1);
+  return `${next.getFullYear()}-${String(next.getMonth() + 1).padStart(2, '0')}-${String(next.getDate()).padStart(2, '0')}`;
+}
+
+/**
+ * Determine which host-timezone calendar days are covered by a UTC window.
+ * Returns an array of YYYY-MM-DD strings in the host timezone.
+ */
+function getHostDaysCoveredByBookerDay(
+  windowStartUTC: Date,
+  windowEndUTC: Date,
+  hostTimezone: string
+): string[] {
+  const days: string[] = [];
+  const formatter = new Intl.DateTimeFormat('en-CA', {
+    timeZone: hostTimezone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  });
+
+  // Check each hour of the window to find all host days covered
+  let current = windowStartUTC.getTime();
+  const end = windowEndUTC.getTime();
+  while (current < end) {
+    const dateStr = formatter.format(new Date(current));
+    if (!days.includes(dateStr)) {
+      days.push(dateStr);
+    }
+    current += 3600_000; // advance 1 hour
+  }
+  // Also check the end boundary minus 1ms
+  const endDateStr = formatter.format(new Date(end - 1));
+  if (!days.includes(endDateStr)) {
+    days.push(endDateStr);
+  }
+
+  return days;
 }
 
 function getDayOfWeekInTimezone(dateStr: string, timezone: string): number {
@@ -242,7 +307,8 @@ async function fetchBusyTimes(
     };
   }>,
   timeMin: string,
-  timeMax: string
+  timeMax: string,
+  eventTimezone: string
 ): Promise<BusyTime[]> {
   const busyTimes: BusyTime[] = [];
 
@@ -254,13 +320,12 @@ async function fetchBusyTimes(
   for (const link of checkCalendars) {
     if (link.calendar.googleAccount.status !== 'active') continue;
     const accountId = link.calendar.googleAccountId;
-    if (!byAccount.has(accountId)) {
-      byAccount.set(accountId, []);
-    }
-    byAccount.get(accountId)!.push({
+    const accountCalendars = byAccount.get(accountId) || [];
+    accountCalendars.push({
       calendarId: link.calendar.id,
       googleCalendarId: link.calendar.googleCalendarId,
     });
+    byAccount.set(accountId, accountCalendars);
   }
 
   for (const [accountId, calendars] of byAccount) {
@@ -275,9 +340,25 @@ async function fetchBusyTimes(
           );
           for (const event of events) {
             if (event.status === 'cancelled') continue;
-            const start =
-              event.start.dateTime || `${event.start.date}T00:00:00Z`;
-            const end = event.end.dateTime || `${event.end.date}T00:00:00Z`;
+
+            let start: string;
+            let end: string;
+
+            if (event.start.dateTime && event.end.dateTime) {
+              // Timed event — already has timezone offset
+              start = event.start.dateTime;
+              end = event.end.dateTime;
+            } else if (event.start.date && event.end.date) {
+              // All-day event — Google uses floating dates (YYYY-MM-DD).
+              // Convert to midnight in the calendar's timezone, not UTC,
+              // so the busy window aligns with the correct local day.
+              const calTz = event.start.timeZone || eventTimezone;
+              start = parseTimeInTimezone(event.start.date, '00:00', calTz).toISOString();
+              end = parseTimeInTimezone(event.end.date, '00:00', calTz).toISOString();
+            } else {
+              continue;
+            }
+
             busyTimes.push({ start, end });
           }
         } catch {

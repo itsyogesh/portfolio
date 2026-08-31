@@ -1,11 +1,13 @@
 import { database } from '@packages/db';
-import { createMetadata } from '@packages/seo/metadata';
 import type { Metadata } from 'next';
+import { createProfileMetadata } from '../lib/metadata';
 
-export const metadata: Metadata = createMetadata({
-  title: 'Stack',
-  description: 'The tools, languages, and infrastructure I use to build products.',
-});
+export const generateMetadata = async (): Promise<Metadata> =>
+  createProfileMetadata({
+    title: 'Stack',
+    description: 'The tools, languages, and infrastructure used to build products.',
+    path: '/stack',
+  });
 
 const StackPage = async () => {
   const categories = await database.stackCategory.findMany({
@@ -38,7 +40,7 @@ const StackPage = async () => {
                     src={
                       item.iconSlug
                         ? `https://cdn.simpleicons.org/${item.iconSlug}`
-                        : item.logoUrl!
+                      : item.logoUrl || ''
                     }
                     alt={item.name}
                     className={`h-5 w-5 shrink-0 object-contain${item.iconSlug ? ' dark:invert' : ''}`}

@@ -5,6 +5,16 @@ import { type BetterAuthOptions, betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { nextCookies } from 'better-auth/next-js';
 
+const trustedOrigins = [
+  'http://localhost:4000',
+  'http://localhost:4001',
+  process.env.BETTER_AUTH_URL,
+  process.env.NEXT_PUBLIC_WEB_URL,
+  ...(process.env.AUTH_TRUSTED_ORIGINS?.split(',') || []),
+]
+  .filter((origin): origin is string => Boolean(origin?.trim()))
+  .map((origin) => new URL(origin.trim()).origin);
+
 const authOptions = {
   baseURL:
     process.env.BETTER_AUTH_URL ||
@@ -16,16 +26,13 @@ const authOptions = {
     provider: 'postgresql',
   }),
 
-  trustedOrigins: [
-    'http://localhost:4000',
-    'http://localhost:4001',
-    ...(process.env.NODE_ENV === 'production'
-      ? ['https://itsyogesh.fyi', 'https://backstage.itsyogesh.fyi']
-      : []),
-  ],
+  trustedOrigins: [...new Set(trustedOrigins)],
 
   emailAndPassword: {
     enabled: true,
+    // Bootstrap explicitly, then fail closed. This prevents the public Better
+    // Auth endpoint from becoming an account-creation surface in production.
+    disableSignUp: process.env.ALLOW_SIGN_UP !== 'true',
     requireEmailVerification: false,
   },
 

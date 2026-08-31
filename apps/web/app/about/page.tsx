@@ -1,18 +1,19 @@
 import { Timeline } from '@packages/base/components/ui/timeline';
 import { database } from '@packages/db';
 import { JsonLd, type WithContext, type ProfilePage } from '@packages/seo/json-ld';
-import { createMetadata } from '@packages/seo/metadata';
 import type { Metadata } from 'next';
 import Markdown from 'react-markdown';
+import { createProfileMetadata } from '../lib/metadata';
 import { getProfile } from '../lib/profile';
 
 export const generateMetadata = async (): Promise<Metadata> => {
   const profile = await getProfile();
-  const name = profile?.name || 'Yogesh Kumar';
-  const headline = profile?.headline || 'Full-stack builder';
-  return createMetadata({
+  const name = profile?.name || 'Portfolio owner';
+  const headline = profile?.headline || 'Personal portfolio';
+  return createProfileMetadata({
     title: 'About',
     description: `The story of ${name} — ${headline}.`,
+    path: '/about',
   });
 };
 
@@ -32,10 +33,10 @@ const AboutPage = async () => {
     ]);
 
   const stats = [
-    { label: 'Years building', value: '12+' },
-    { label: 'Products shipped', value: `${projectCount}+` },
-    { label: 'Hackathons won', value: String(accoladeCount || 3) },
-    { label: 'Ventures', value: String(orgCount || 6) },
+    { label: 'Projects', value: String(projectCount) },
+    { label: 'Organizations', value: String(orgCount) },
+    { label: 'Hackathons', value: String(accoladeCount) },
+    { label: 'Tools & technologies', value: String(stackItems.length) },
   ];
 
   const jsonLd: WithContext<ProfilePage> = {

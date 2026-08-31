@@ -23,8 +23,8 @@ const HomePage = async () => {
   ]);
 
   const latestPosts = blog.getLatestPosts(3);
-  const name = profile?.name || 'Yogesh Kumar';
-  const headline = profile?.headline || 'Full-stack builder. 12+ years shipping products.';
+  const name = profile?.name || 'Portfolio';
+  const headline = profile?.headline || 'Personal portfolio';
 
   return (
     <div className="mx-auto max-w-2xl px-6 pt-24 pb-20">
@@ -34,17 +34,7 @@ const HomePage = async () => {
           {name}
         </h1>
         <p className="text-lg text-muted-foreground leading-relaxed max-w-lg">
-          {headline} Currently building with AI agents and running{' '}
-          <Link
-            href="/projects"
-            className="text-foreground underline underline-offset-4 decoration-muted-foreground/40 hover:decoration-foreground transition-colors"
-          >
-            multiple ventures
-          </Link>
-          .
-        </p>
-        <p className="mt-4 text-sm text-muted-foreground/70 font-display italic">
-          Dropped out of college in 2013. Been building since.
+          {headline}
         </p>
       </section>
 

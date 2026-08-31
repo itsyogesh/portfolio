@@ -1,30 +1,66 @@
 import { database } from '@packages/db';
-import { createMetadata } from '@packages/seo/metadata';
 import { Star } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { createProfileMetadata } from '../lib/metadata';
 
-export const metadata: Metadata = createMetadata({
-  title: 'Stars',
-  description: 'GitHub repositories I\'ve starred — tools, libraries, and projects I find interesting.',
-});
+const PAGE_SIZE = 100;
 
-const StarsPage = async () => {
-  const [lists, unsortedRepos] = await Promise.all([
+export const generateMetadata = async (): Promise<Metadata> =>
+  createProfileMetadata({
+    title: 'Stars',
+    description: 'A curated collection of useful GitHub repositories.',
+    path: '/stars',
+  });
+
+const StarsPage = async ({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) => {
+  const { page: pageParam } = await searchParams;
+  const requestedPage = Number.parseInt(pageParam || '1', 10);
+  const safeRequestedPage =
+    Number.isFinite(requestedPage) && requestedPage > 0 ? requestedPage : 1;
+
+  const [lists, unsortedCount] = await Promise.all([
     database.starList.findMany({
       include: {
         repos: {
           where: { isStarred: true },
           orderBy: { position: 'asc' },
+          select: {
+            id: true,
+            fullName: true,
+            htmlUrl: true,
+            description: true,
+            stargazersCount: true,
+          },
         },
       },
       orderBy: { position: 'asc' },
     }),
-    database.starRepo.findMany({
+    database.starRepo.count({
       where: { isStarred: true, listId: null },
-      orderBy: { stargazersCount: 'desc' },
     }),
   ]);
+
+  const totalPages = Math.max(1, Math.ceil(unsortedCount / PAGE_SIZE));
+  const currentPage = Math.min(safeRequestedPage, totalPages);
+  const unsortedRepos = await database.starRepo.findMany({
+    where: { isStarred: true, listId: null },
+    orderBy: { stargazersCount: 'desc' },
+    skip: (currentPage - 1) * PAGE_SIZE,
+    take: PAGE_SIZE,
+    select: {
+      id: true,
+      fullName: true,
+      htmlUrl: true,
+      description: true,
+      language: true,
+      stargazersCount: true,
+    },
+  });
 
   // Group unsorted repos by language
   const groupedByLanguage = unsortedRepos.reduce<
@@ -72,6 +108,14 @@ const StarsPage = async () => {
           ))}
 
       {/* Ungrouped by language */}
+      {unsortedCount > 0 && (
+        <p className="text-sm text-muted-foreground">
+          Showing {(currentPage - 1) * PAGE_SIZE + 1}-
+          {Math.min(currentPage * PAGE_SIZE, unsortedCount)} of {unsortedCount}{' '}
+          unsorted repositories.
+        </p>
+      )}
+
       {languages.map((lang) => (
         <section key={lang} className="space-y-4">
           <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
@@ -89,6 +133,37 @@ const StarsPage = async () => {
         <p className="text-muted-foreground">
           No starred repos yet. Check back later.
         </p>
+      )}
+
+      {totalPages > 1 && (
+        <nav
+          aria-label="Stars pagination"
+          className="flex items-center justify-between border-t border-border/50 pt-6 text-sm"
+        >
+          {currentPage > 1 ? (
+            <Link
+              href={`/stars?page=${currentPage - 1}`}
+              className="text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Previous
+            </Link>
+          ) : (
+            <span />
+          )}
+          <span className="text-muted-foreground">
+            Page {currentPage} of {totalPages}
+          </span>
+          {currentPage < totalPages ? (
+            <Link
+              href={`/stars?page=${currentPage + 1}`}
+              className="text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Next
+            </Link>
+          ) : (
+            <span />
+          )}
+        </nav>
       )}
     </div>
   );

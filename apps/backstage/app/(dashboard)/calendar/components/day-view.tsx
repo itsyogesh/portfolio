@@ -100,15 +100,7 @@ export function DayView({
       )}
 
       {/* Time grid */}
-      <div
-        className="grid grid-cols-[60px_1fr] overflow-y-auto max-h-[calc(100vh-300px)]"
-        onClick={() => onDayClick(currentDate)}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter') onDayClick(currentDate);
-        }}
-        role="button"
-        tabIndex={0}
-      >
+      <div className="grid grid-cols-[60px_1fr] overflow-y-auto max-h-[calc(100vh-300px)]">
         {/* Time labels */}
         <div className="border-r border-border">
           {HOURS.map((hour) => (
@@ -124,10 +116,16 @@ export function DayView({
 
         {/* Event column */}
         <div className="relative">
+          <button
+            type="button"
+            className="absolute inset-0 cursor-pointer"
+            onClick={() => onDayClick(currentDate)}
+            aria-label={`Create an event on ${format(currentDate, 'MMMM d, yyyy')}`}
+          />
           {HOURS.map((hour) => (
             <div
               key={hour}
-              className="border-b border-border/50"
+              className="pointer-events-none border-b border-border/50"
               style={{ height: HOUR_HEIGHT }}
             />
           ))}

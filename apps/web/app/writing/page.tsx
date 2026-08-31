@@ -1,15 +1,17 @@
 import { blog } from '@packages/cms';
 import { database } from '@packages/db';
-import { createMetadata } from '@packages/seo/metadata';
 import { ExternalLink } from 'lucide-react';
 import { format } from 'date-fns';
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { createProfileMetadata } from '../lib/metadata';
 
-export const metadata: Metadata = createMetadata({
-  title: 'Writing',
-  description: 'Articles on building products, design systems, AI tools, and Web3.',
-});
+export const generateMetadata = async (): Promise<Metadata> =>
+  createProfileMetadata({
+    title: 'Writing',
+    description: 'Articles, essays, and writing published here and elsewhere.',
+    path: '/writing',
+  });
 
 const sourceLabel: Record<string, string> = {
   substack: 'Substack',

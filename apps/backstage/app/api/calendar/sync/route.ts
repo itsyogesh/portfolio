@@ -1,5 +1,6 @@
 import { database } from '@packages/db';
 import {
+  type GoogleEvent,
   getValidAccessToken,
   listAllEvents,
   SyncTokenExpiredError,
@@ -24,7 +25,7 @@ export async function POST() {
     try {
       const accessToken = await getValidAccessToken(cal.googleAccountId);
 
-      let events;
+      let events: GoogleEvent[] = [];
       let nextSyncToken: string | undefined;
 
       try {

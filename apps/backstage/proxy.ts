@@ -1,13 +1,16 @@
+import { getSessionCookie } from '@packages/auth/cookies';
 import { type NextRequest, NextResponse } from 'next/server';
 
 export const config = {
-  matcher: ['/((?!sign-in|api|_next/static|_next/image|favicon.ico).*)'],
+  matcher: [
+    '/((?!sign-in|api|robots.txt|_next/static|_next/image|favicon.ico).*)',
+  ],
 };
 
 export default async function proxy(request: NextRequest) {
-  const sessionCookie = request.cookies.get('better-auth.session_token');
+  const sessionCookie = getSessionCookie(request);
 
-  if (!sessionCookie?.value) {
+  if (!sessionCookie) {
     return NextResponse.redirect(new URL('/sign-in', request.url));
   }
 

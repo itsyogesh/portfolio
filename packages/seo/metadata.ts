@@ -1,7 +1,7 @@
 import merge from 'lodash.merge';
 import type { Metadata } from 'next';
 
-type MetadataGenerator = Omit<Metadata, 'description' | 'title'> & {
+export type MetadataGenerator = Omit<Metadata, 'description' | 'title'> & {
   title: string;
   description: string;
   image?: string;
@@ -10,11 +10,11 @@ type MetadataGenerator = Omit<Metadata, 'description' | 'title'> & {
   twitterHandle?: string;
 };
 
-const defaultAuthorName = 'Yogesh Kumar';
-const defaultAuthorUrl = 'https://itsyogesh.fyi/';
-const defaultTwitterHandle = '@itsyogesh18';
-const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
-const productionUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL || 'itsyogesh.fyi';
+const configuredSiteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : 'http://localhost:4000');
 
 export const createMetadata = ({
   title,
@@ -25,21 +25,18 @@ export const createMetadata = ({
   twitterHandle,
   ...properties
 }: MetadataGenerator): Metadata => {
-  const appName = authorName || defaultAuthorName;
+  const appName = authorName || 'Portfolio';
   const author: Metadata['authors'] = {
     name: appName,
-    url: authorUrl || defaultAuthorUrl,
+    url: authorUrl || configuredSiteUrl,
   };
-  const twitter = twitterHandle || defaultTwitterHandle;
 
   const parsedTitle = `${title} | ${appName}`;
   const defaultMetadata: Metadata = {
     title,
     description,
     applicationName: appName,
-    metadataBase: productionUrl
-      ? new URL(`${protocol}://${productionUrl}`)
-      : undefined,
+    metadataBase: new URL(configuredSiteUrl),
     authors: [author],
     creator: author.name,
     formatDetection: {
@@ -60,7 +57,7 @@ export const createMetadata = ({
     publisher: appName,
     twitter: {
       card: 'summary_large_image',
-      creator: twitter,
+      ...(twitterHandle && { creator: twitterHandle }),
     },
   };
 

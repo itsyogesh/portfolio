@@ -1,18 +1,19 @@
 import { database } from '@packages/db';
-import { createMetadata } from '@packages/seo/metadata';
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { BookmarkFilters } from './components/bookmark-filters';
 import { BookmarkList, BookmarkListSkeleton } from './components/bookmark-list';
 import { BookmarkSearch } from './components/bookmark-search';
+import { createProfileMetadata } from '../lib/metadata';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata: Metadata = createMetadata({
-  title: 'Bookmarks',
-  description:
-    'A collection of 4,000+ articles, tools, and resources saved over 12 years.',
-});
+export const generateMetadata = async (): Promise<Metadata> =>
+  createProfileMetadata({
+    title: 'Bookmarks',
+    description: 'A personal collection of articles, tools, and resources.',
+    path: '/bookmarks',
+  });
 
 type BookmarksPageProps = {
   searchParams: Promise<{

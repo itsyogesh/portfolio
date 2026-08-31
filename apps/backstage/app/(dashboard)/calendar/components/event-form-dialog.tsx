@@ -46,13 +46,20 @@ export function EventFormDialog({
         ? format(defaultDate, "yyyy-MM-dd'T'09:00")
         : format(new Date(), "yyyy-MM-dd'T'09:00")
   );
-  const [endDate, setEndDate] = useState(
-    event
-      ? format(new Date(event.endTime), "yyyy-MM-dd'T'HH:mm")
-      : defaultDate
-        ? format(defaultDate, "yyyy-MM-dd'T'10:00")
-        : format(new Date(), "yyyy-MM-dd'T'10:00")
-  );
+  const [endDate, setEndDate] = useState(() => {
+    if (event) {
+      const end = new Date(event.endTime);
+      // Google stores all-day event end dates as exclusive (a one-day event on
+      // March 10 has end=March 11). Subtract a day so the form shows the
+      // inclusive end date the user expects.
+      if (event.isAllDay) {
+        end.setDate(end.getDate() - 1);
+      }
+      return format(end, "yyyy-MM-dd'T'HH:mm");
+    }
+    if (defaultDate) return format(defaultDate, "yyyy-MM-dd'T'10:00");
+    return format(new Date(), "yyyy-MM-dd'T'10:00");
+  });
   const [calendarId, setCalendarId] = useState(
     event?.calendarId || defaultCalendar?.id || ''
   );
@@ -133,7 +140,6 @@ export function EventFormDialog({
               onChange={(e) => setSummary(e.target.value)}
               placeholder="Event title"
               className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-              autoFocus
             />
           </div>
 

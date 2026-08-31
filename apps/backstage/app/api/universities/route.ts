@@ -15,11 +15,11 @@ type University = {
 let universities: University[] | null = null;
 
 function loadUniversities(): University[] {
-  if (!universities) {
-    const dataPath = join(process.cwd(), '..', '..', 'data', 'universities.json');
-    universities = JSON.parse(readFileSync(dataPath, 'utf-8'));
-  }
-  return universities!;
+  if (universities) return universities;
+
+  const dataPath = join(process.cwd(), '..', '..', 'data', 'universities.json');
+  universities = JSON.parse(readFileSync(dataPath, 'utf-8'));
+  return universities || [];
 }
 
 // GET /api/universities?q=search+term&limit=10

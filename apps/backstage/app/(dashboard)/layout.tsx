@@ -8,12 +8,12 @@ import type { ReactNode } from 'react';
 import { cookies } from 'next/headers';
 import { AppSidebar } from '../components/app-sidebar';
 import { HeaderBreadcrumb } from '../components/header-breadcrumb';
-import { getSession } from '../api/_lib/auth';
+import { requireAdminPage } from '../api/_lib/auth';
 
 const DashboardLayout = async ({ children }: { children: ReactNode }) => {
   const cookieStore = await cookies();
   const defaultOpen = cookieStore.get('sidebar_state')?.value !== 'false';
-  const session = await getSession();
+  const session = await requireAdminPage();
 
   return (
     <SidebarProvider defaultOpen={defaultOpen}>

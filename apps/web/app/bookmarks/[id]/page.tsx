@@ -1,11 +1,10 @@
 import { database } from '@packages/db';
 import { Badge } from '@packages/base/components/ui/badge';
-import { createMetadata } from '@packages/seo/metadata';
 import { ArrowLeft, Calendar, ExternalLink, User } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import sanitizeHtml from 'sanitize-html';
+import { createProfileMetadata } from '../../lib/metadata';
 
 type PageProps = {
   params: Promise<{ id: string }>;
@@ -13,17 +12,18 @@ type PageProps = {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params;
-  const bookmark = await database.bookmark.findUnique({
-    where: { id },
+  const bookmark = await database.bookmark.findFirst({
+    where: { id, isPublic: true },
     select: { title: true, summary: true, imageUrl: true },
   });
 
   if (!bookmark) return {};
 
-  return createMetadata({
+  return createProfileMetadata({
     title: bookmark.title,
-    description: bookmark.summary || `Read "${bookmark.title}" on itsyogesh.fyi`,
+    description: bookmark.summary || `Read “${bookmark.title}”.`,
     image: bookmark.imageUrl || undefined,
+    path: `/bookmarks/${id}`,
   });
 }
 
@@ -37,32 +37,6 @@ export default async function BookmarkReaderPage({ params }: PageProps) {
   if (!bookmark || !bookmark.isPublic) {
     notFound();
   }
-
-  const hasContent = bookmark.fullText && bookmark.extractionStatus === 'done';
-
-  const sanitizedContent = hasContent
-    ? sanitizeHtml(bookmark.fullText!, {
-        allowedTags: sanitizeHtml.defaults.allowedTags.concat([
-          'img',
-          'figure',
-          'figcaption',
-          'picture',
-          'source',
-          'video',
-          'audio',
-          'pre',
-          'code',
-        ]),
-        allowedAttributes: {
-          ...sanitizeHtml.defaults.allowedAttributes,
-          img: ['src', 'alt', 'width', 'height', 'loading'],
-          a: ['href', 'target', 'rel'],
-          code: ['class'],
-          pre: ['class'],
-        },
-        allowedSchemes: ['http', 'https'],
-      })
-    : null;
 
   return (
     <div className="mx-auto max-w-2xl px-6 pt-24 pb-20">
@@ -138,32 +112,21 @@ export default async function BookmarkReaderPage({ params }: PageProps) {
         )}
       </header>
 
-      {/* Article content */}
-      {sanitizedContent ? (
-        <article
-          className="prose prose-neutral dark:prose-invert max-w-none prose-sm prose-headings:font-display prose-a:text-foreground prose-a:underline-offset-4"
-          dangerouslySetInnerHTML={{ __html: sanitizedContent }}
-        />
-      ) : (
-        <div className="text-center py-12">
-          <p className="text-muted-foreground mb-4">
-            {bookmark.extractionStatus === 'pending'
-              ? 'Article content is being processed...'
-              : bookmark.extractionStatus === 'failed'
-                ? 'Could not extract article content.'
-                : 'No readable content available for this bookmark.'}
-          </p>
-          <a
-            href={bookmark.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-sm text-foreground hover:text-foreground/80 transition-colors underline underline-offset-4"
-          >
-            <ExternalLink className="h-4 w-4" />
-            Read on original site
-          </a>
-        </div>
-      )}
+      <div className="rounded-lg border border-border/50 bg-muted/20 px-6 py-10 text-center">
+        <p className="mb-4 text-sm text-muted-foreground">
+          This is a saved recommendation. The complete article remains on its
+          original publisher's site.
+        </p>
+        <a
+          href={bookmark.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 text-sm text-foreground underline underline-offset-4 transition-colors hover:text-foreground/80"
+        >
+          <ExternalLink className="h-4 w-4" />
+          Read the original article
+        </a>
+      </div>
     </div>
   );
 }

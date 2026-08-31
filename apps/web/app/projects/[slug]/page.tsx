@@ -1,31 +1,26 @@
 import { database } from '@packages/db';
 import { JsonLd, type WithContext, type CreativeWork } from '@packages/seo/json-ld';
-import { createMetadata } from '@packages/seo/metadata';
 import { ArrowLeft, ExternalLink } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { createProfileMetadata } from '../../lib/metadata';
+import { getProfile } from '../../lib/profile';
 
 type Props = {
   params: Promise<{ slug: string }>;
-};
-
-export const generateStaticParams = async () => {
-  const projects = await database.project.findMany({
-    select: { slug: true },
-  });
-  return projects.map((p) => ({ slug: p.slug }));
 };
 
 export const generateMetadata = async ({ params }: Props): Promise<Metadata> => {
   const { slug } = await params;
   const project = await database.project.findUnique({ where: { slug } });
   if (!project) return {};
-  return createMetadata({
+  return createProfileMetadata({
     title: project.title,
     description: project.summary || '',
+    path: `/projects/${project.slug}`,
   });
 };
 
@@ -36,7 +31,7 @@ const ProjectPage = async ({ params }: Props) => {
       where: { slug },
       include: { organization: true },
     }),
-    database.profile.findFirst({ select: { name: true, website: true } }),
+    getProfile(),
   ]);
   if (!project) notFound();
 
@@ -48,7 +43,7 @@ const ProjectPage = async ({ params }: Props) => {
     url: project.url ?? undefined,
     author: {
       '@type': 'Person',
-      name: profile?.name ?? 'Yogesh Kumar',
+      name: profile?.name ?? 'Portfolio owner',
       url: profile?.website ?? undefined,
     },
     ...(project.organization && {

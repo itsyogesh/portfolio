@@ -37,7 +37,12 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const redirectUri = process.env.GOOGLE_REDIRECT_URI!;
+    const redirectUri = process.env.GOOGLE_REDIRECT_URI;
+    if (!redirectUri) {
+      return NextResponse.redirect(
+        new URL('/calendar?error=missing_config', request.url)
+      );
+    }
     const tokens = await exchangeCodeForTokens(code, redirectUri);
     const userInfo = await getUserInfo(tokens.access_token);
 
@@ -71,6 +76,15 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    const encryptedRefreshToken = tokens.refresh_token
+      ? encrypt(tokens.refresh_token)
+      : existingAccount?.encryptedRefreshToken;
+    if (!encryptedRefreshToken) {
+      return NextResponse.redirect(
+        new URL('/calendar?error=no_refresh_token', request.url)
+      );
+    }
+
     await database.googleAccount.upsert({
       where: { googleAccountId: userInfo.id },
       update: updateData,
@@ -79,7 +93,7 @@ export async function GET(request: NextRequest) {
         googleAccountId: userInfo.id,
         displayName: userInfo.name,
         encryptedAccessToken,
-        encryptedRefreshToken: encrypt(tokens.refresh_token!),
+        encryptedRefreshToken,
         accessTokenExpiresAt,
         scope: tokens.scope,
       },

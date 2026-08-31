@@ -1,11 +1,14 @@
 import { database } from '@packages/db';
 import Link from 'next/link';
 import type { Metadata } from 'next';
+import { createProfileMetadata } from '../lib/metadata';
 
-export const metadata: Metadata = {
-  title: 'Schedule a Meeting',
-  description: 'Book a time to chat',
-};
+export const generateMetadata = async (): Promise<Metadata> =>
+  createProfileMetadata({
+    title: 'Schedule a Meeting',
+    description: 'Choose a meeting type and book an available time.',
+    path: '/schedule',
+  });
 
 export default async function SchedulePage() {
   const eventTypes = await database.eventType.findMany({

@@ -25,9 +25,13 @@
       "packages/base/components/ui/**",
       "packages/base/lib/**",
       "packages/base/hooks/**",
+      "packages/db/generated/**",
+      ".turbo/**",
       ".next/**",
       "node_modules/**",
-      ".content-collections/**"
+      ".content-collections/**",
+      "content/pages/bookmarks.json",
+      "data/universities.json"
     ]
   }
 }

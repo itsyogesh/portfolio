@@ -16,8 +16,8 @@
     "@tooling/typescript-config": "workspace:*",
     "@types/lodash.merge": "^4.6.9",
     "@types/node": "24.10.1",
-    "@types/react": "19.2.7",
+    "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
-    "next": "16.1.6"
+    "next": "16.3.0"
   }
 }

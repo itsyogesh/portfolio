@@ -8,37 +8,48 @@ import type { ReactNode } from 'react';
 import { Footer } from './components/footer';
 import { Header } from './components/header';
 import { getProfile } from './lib/profile';
+import { getSiteUrl } from './lib/site';
+
+// Backstage edits become visible within one minute without requiring a deploy.
+export const revalidate = 60;
 
 export async function generateMetadata(): Promise<Metadata> {
   const profile = await getProfile();
-  const name = profile?.name || 'Yogesh Kumar';
+  const name = profile?.name || 'Portfolio';
+  const siteUrl = getSiteUrl();
 
   return {
     title: {
       default: name,
       template: `%s | ${name}`,
     },
-    description: profile?.headline || 'Full-stack builder. 12+ years shipping products.',
-    metadataBase: new URL(
-      process.env.VERCEL_PROJECT_PRODUCTION_URL
-        ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-        : 'http://localhost:4000'
-    ),
+    description: profile?.headline || 'Personal portfolio',
+    metadataBase: siteUrl,
+    authors: [{ name, url: profile?.website || siteUrl }],
+    creator: name,
+    publisher: name,
+    alternates: { canonical: siteUrl.href },
+    openGraph: {
+      type: 'website',
+      title: name,
+      description: profile?.headline || 'Personal portfolio',
+      siteName: name,
+      url: siteUrl,
+    },
+    twitter: { card: 'summary_large_image' },
   };
 }
 
 const RootLayout = async ({ children }: { children: ReactNode }) => {
   const profile = await getProfile();
-  const profileName = profile?.name || 'Yogesh Kumar';
-  const siteUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL
-    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-    : 'http://localhost:4000';
+  const profileName = profile?.name || 'Portfolio';
+  const siteUrl = getSiteUrl();
 
   const webSiteJsonLd: WithContext<WebSite> = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: profileName,
-    url: siteUrl,
+    url: siteUrl.href,
     description: profile?.headline ?? undefined,
   };
 
