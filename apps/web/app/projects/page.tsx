@@ -21,6 +21,8 @@ const statusLabel: Record<string, string> = {
 };
 
 const categoryLabel: Record<string, string> = {
+  company: 'Company',
+  venture: 'Venture',
   saas: 'SaaS',
   web3: 'Web3',
   agency: 'Agency',
